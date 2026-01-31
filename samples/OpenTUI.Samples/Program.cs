@@ -20,6 +20,9 @@ if (args.Length > 0)
         case "--dashboard":
             OpenTUI.Samples.DashboardDemo.Run();
             return;
+        case "--animation":
+            OpenTUI.Samples.AnimationDemo.Run();
+            return;
         case "--help":
             Console.WriteLine("OpenTUI.NET Sample Demos");
             Console.WriteLine("========================");
@@ -27,6 +30,7 @@ if (args.Length > 0)
             Console.WriteLine("  --visual     Visual demo with alternate screen");
             Console.WriteLine("  --form       Form input demo");
             Console.WriteLine("  --dashboard  Dashboard widget demo");
+            Console.WriteLine("  --animation  Animation effects demo (spinners, progress, effects)");
             Console.WriteLine("  --help       Show this help");
             return;
     }

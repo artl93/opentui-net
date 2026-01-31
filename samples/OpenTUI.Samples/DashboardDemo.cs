@@ -19,8 +19,8 @@ public static class DashboardDemo
             state.HideCursor();
             
             var size = TerminalSize.GetCurrent();
-            var width = Math.Min(size.Width, 80);
-            var height = Math.Min(size.Height, 24);
+            var width = size.Width;
+            var height = size.Height;
             
             var buffer = new FrameBuffer(width, height);
             
