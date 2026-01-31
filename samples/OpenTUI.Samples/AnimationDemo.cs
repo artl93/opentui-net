@@ -1,3 +1,4 @@
+using OpenTUI.Core.Animation;
 using OpenTUI.Core.Colors;
 using OpenTUI.Core.Rendering;
 using OpenTUI.Core.Terminal;
@@ -5,45 +6,10 @@ using OpenTUI.Core.Terminal;
 namespace OpenTUI.Samples;
 
 /// <summary>
-/// Animation demo showcasing progress bars, spinners, and text effects.
+/// Animation demo showcasing the reusable animation primitives.
 /// </summary>
 public static class AnimationDemo
 {
-    private static readonly string[] Spinners = new[]
-    {
-        "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"  // Dots
-    };
-    
-    private static readonly string[] BouncingBar = new[]
-    {
-        "[    ●    ]",
-        "[   ●     ]",
-        "[  ●      ]",
-        "[ ●       ]",
-        "[●        ]",
-        "[ ●       ]",
-        "[  ●      ]",
-        "[   ●     ]",
-        "[    ●    ]",
-        "[     ●   ]",
-        "[      ●  ]",
-        "[       ● ]",
-        "[        ●]",
-        "[       ● ]",
-        "[      ●  ]",
-        "[     ●   ]"
-    };
-    
-    private static readonly string[] BlockSpinner = new[]
-    {
-        "▖", "▘", "▝", "▗"
-    };
-    
-    private static readonly string[] ArrowSpinner = new[]
-    {
-        "←", "↖", "↑", "↗", "→", "↘", "↓", "↙"
-    };
-
     public static void Run()
     {
         var state = new TerminalState();
@@ -57,19 +23,28 @@ public static class AnimationDemo
             var width = size.Width;
             var height = size.Height;
             
+            // Create reusable animation components
+            var dotsSpinner = Spinner.Dots("Loading...");
+            var lineSpinner = Spinner.Line("Processing");
+            var arrowSpinner = Spinner.Arrow("Syncing");
+            var bouncingSpinner = Spinner.BouncingBall();
+            
+            var downloadBar = new ProgressBar(30) { Label = "Download", FilledColor = RGBA.Green };
+            var uploadBar = new ProgressBar(30) { Label = "Upload", FilledColor = RGBA.FromHex("#00aaff") };
+            var installBar = ProgressBar.Indeterminate(30);
+            installBar.FilledColor = RGBA.FromHex("#ff44aa");
+            
             var startTime = DateTime.Now;
             var running = true;
             
-            // Check for key press without blocking
             Console.CancelKeyPress += (_, e) => { running = false; e.Cancel = true; };
             
-            int frame = 0;
             while (running)
             {
                 var buffer = new FrameBuffer(width, height);
                 var elapsed = (DateTime.Now - startTime).TotalSeconds;
                 
-                // Fill background with subtle gradient effect
+                // Background with gradient
                 for (int y = 0; y < height; y++)
                 {
                     var bgIntensity = 0.02f + (y / (float)height) * 0.03f;
@@ -77,73 +52,108 @@ public static class AnimationDemo
                 }
                 
                 // Title with shimmer effect
-                DrawShimmeringText(buffer, "✨ OpenTUI.NET Animation Demo ✨", (width - 34) / 2, 1, elapsed);
+                var titleChars = TextEffects.Shimmer("✨ OpenTUI.NET Animation Demo ✨", elapsed);
+                var titleX = (width - titleChars.Length) / 2;
+                for (int i = 0; i < titleChars.Length && titleX + i < width; i++)
+                {
+                    buffer.SetCell(titleX + i, 1, new Cell(titleChars[i].ch.ToString(), titleChars[i].color));
+                }
                 
-                // Spinners section
+                // === Spinners Section ===
                 DrawBox(buffer, 2, 3, 30, 10, "Spinners", RGBA.FromHex("#00aaff"));
                 
-                var spinnerIdx = frame % Spinners.Length;
-                buffer.DrawText($"{Spinners[spinnerIdx]} Loading...", 4, 5, RGBA.FromHex("#00ff88"));
+                dotsSpinner.Update();
+                buffer.DrawText(dotsSpinner.ToString(), 4, 5, RGBA.FromHex("#00ff88"));
                 
-                var blockIdx = (frame / 2) % BlockSpinner.Length;
-                buffer.DrawText($"{BlockSpinner[blockIdx]} Processing", 4, 7, RGBA.Yellow);
+                lineSpinner.Update();
+                buffer.DrawText(lineSpinner.ToString(), 4, 7, RGBA.Yellow);
                 
-                var arrowIdx = frame % ArrowSpinner.Length;
-                buffer.DrawText($"{ArrowSpinner[arrowIdx]} Syncing", 4, 9, RGBA.Cyan);
+                arrowSpinner.Update();
+                buffer.DrawText(arrowSpinner.ToString(), 4, 9, RGBA.Cyan);
                 
-                buffer.DrawText(BouncingBar[(frame / 2) % BouncingBar.Length], 4, 11, RGBA.Magenta);
+                bouncingSpinner.Update();
+                buffer.DrawText(bouncingSpinner.CurrentFrame, 4, 11, RGBA.Magenta);
                 
-                // Progress bars section
-                DrawBox(buffer, 34, 3, width - 36, 10, "Progress Bars", RGBA.FromHex("#ff6644"));
+                // === Progress Bars Section ===
+                var progressBoxWidth = Math.Min(width - 36, 50);
+                DrawBox(buffer, 34, 3, progressBoxWidth, 10, "Progress Bars", RGBA.FromHex("#ff6644"));
                 
-                // Determinate progress bar
-                var progress1 = (Math.Sin(elapsed * 0.5) + 1) / 2; // 0-1 oscillating
-                DrawProgressBar(buffer, 36, 5, width - 42, progress1, "Download", RGBA.Green);
+                // Determinate progress bars
+                downloadBar.Progress = (Math.Sin(elapsed * 0.5) + 1) / 2;
+                DrawProgressBar(buffer, 36, 5, downloadBar);
                 
-                // Faster progress bar
-                var progress2 = (elapsed % 5) / 5; // 0-1 over 5 seconds
-                DrawProgressBar(buffer, 36, 7, width - 42, progress2, "Upload", RGBA.FromHex("#00aaff"));
+                uploadBar.Progress = (elapsed % 5) / 5;
+                DrawProgressBar(buffer, 36, 7, uploadBar);
                 
                 // Indeterminate progress bar
-                DrawIndeterminateBar(buffer, 36, 9, width - 42, frame, RGBA.FromHex("#ff44aa"));
+                installBar.Update();
+                DrawProgressBar(buffer, 36, 9, installBar);
                 buffer.DrawText("Installing...", 36, 10, RGBA.FromHex("#888888"));
                 
-                // Text effects section
+                // === Text Effects Section ===
                 DrawBox(buffer, 2, 14, width - 4, 10, "Text Effects", RGBA.FromHex("#aa44ff"));
                 
                 // Rainbow text
-                DrawRainbowText(buffer, "Rainbow gradient text - cycling through hues", 4, 16, elapsed);
+                var rainbowChars = TextEffects.Rainbow("Rainbow gradient text - cycling through hues", elapsed);
+                for (int i = 0; i < rainbowChars.Length && 4 + i < width - 4; i++)
+                {
+                    buffer.SetCell(4 + i, 16, new Cell(rainbowChars[i].ch.ToString(), rainbowChars[i].color));
+                }
                 
-                // Wave text (color wave, not position wave)
-                DrawWaveText(buffer, "Wave intensity text effect", 4, 18, elapsed);
+                // Shimmer text
+                var shimmerChars = TextEffects.Shimmer("Shimmering glimmer effect", elapsed, RGBA.FromHex("#4488ff"));
+                for (int i = 0; i < shimmerChars.Length && 4 + i < width - 4; i++)
+                {
+                    buffer.SetCell(4 + i, 18, new Cell(shimmerChars[i].ch.ToString(), shimmerChars[i].color));
+                }
                 
                 // Pulsing text
-                DrawPulsingText(buffer, "Pulsing brightness", 4, 20, elapsed);
+                var pulseColor = TextEffects.Pulse(elapsed, RGBA.FromHex("#ff8844"));
+                buffer.DrawText("Pulsing brightness effect", 4, 20, pulseColor);
                 
                 // Typewriter effect
-                DrawTypewriterText(buffer, "Typewriter effect simulates typing...", 4, 22, elapsed);
+                var typewriterText = TextEffects.Typewriter("Typewriter effect reveals text gradually...", elapsed, 8);
+                buffer.DrawText(typewriterText, 4, 22, RGBA.FromHex("#00ff00"));
+                if (TextEffects.CursorVisible(elapsed) && typewriterText.Length < 44)
+                {
+                    buffer.DrawText("▌", 4 + typewriterText.Length, 22, RGBA.FromHex("#00ff00"));
+                }
                 
                 // Glowing text on right side
-                DrawGlowingText(buffer, "★ Glowing Star Text ★", width - 26, 18, elapsed);
+                var glowColor = TextEffects.Glow(elapsed, RGBA.FromHex("#ffaa00"));
+                var glowText = "★ Glowing Star ★";
+                buffer.DrawText(glowText, width - glowText.Length - 6, 18, glowColor);
                 
-                // Matrix rain effect in a small area
-                DrawBox(buffer, 2, height - 10, 30, 8, "Matrix Rain", RGBA.Green);
-                DrawMatrixRain(buffer, 3, height - 9, 28, 6, frame);
+                // Wave text
+                var waveChars = TextEffects.Wave("Wave intensity", elapsed, RGBA.FromHex("#44aaff"));
+                for (int i = 0; i < waveChars.Length && width - 20 + i < width - 4; i++)
+                {
+                    buffer.SetCell(width - 20 + i, 20, new Cell(waveChars[i].ch.ToString(), waveChars[i].color));
+                }
                 
-                // Status section
+                // === Easing Visualization ===
+                DrawBox(buffer, 2, height - 8, 30, 6, "Easing Demo", RGBA.FromHex("#88ff88"));
+                var t = (float)((elapsed % 2) / 2); // 0-1 over 2 seconds
+                var linearPos = (int)(Easing.Linear(t) * 20);
+                var bouncePos = (int)(Easing.OutBounce(t) * 20);
+                var elasticPos = (int)(Math.Clamp(Easing.OutElastic(t), 0, 1) * 20);
+                
+                buffer.DrawText("Linear:  " + new string(' ', linearPos) + "●", 4, height - 6, RGBA.White);
+                buffer.DrawText("Bounce:  " + new string(' ', bouncePos) + "●", 4, height - 5, RGBA.Yellow);
+                buffer.DrawText("Elastic: " + new string(' ', elasticPos) + "●", 4, height - 4, RGBA.Cyan);
+                
+                // Status bar
                 buffer.FillRect(0, height - 2, width, 1, RGBA.FromValues(0.15f, 0.15f, 0.2f));
-                buffer.DrawText($"Frame: {frame}  |  Elapsed: {elapsed:F1}s  |  Press Ctrl+C to exit", 2, height - 2, RGBA.FromHex("#888888"));
-                buffer.DrawText($"FPS: ~30", width - 12, height - 2, RGBA.FromHex("#00ff88"));
+                buffer.DrawText($"Elapsed: {elapsed:F1}s  |  Press any key to exit", 2, height - 2, RGBA.FromHex("#888888"));
+                buffer.DrawText("Using OpenTUI.Core.Animation", width - 32, height - 2, RGBA.FromHex("#00ff88"));
                 
                 // Render
-                Console.Write("\x1b[H"); // Move to home
+                Console.Write("\x1b[H");
                 Console.Write(buffer.ToAnsiString());
                 Console.Out.Flush();
                 
-                frame++;
                 Thread.Sleep(33); // ~30 FPS
                 
-                // Check for any key press
                 if (Console.KeyAvailable)
                 {
                     Console.ReadKey(true);
@@ -183,150 +193,30 @@ public static class AnimationDemo
         }
     }
 
-    private static void DrawProgressBar(FrameBuffer buffer, int x, int y, int w, double progress, string label, RGBA color)
+    private static void DrawProgressBar(FrameBuffer buffer, int x, int y, ProgressBar bar)
     {
-        var filled = (int)(progress * (w - 2));
-        var bar = new string('█', filled) + new string('░', w - 2 - filled);
+        var (barPart, filledCount) = bar.GetBarParts();
         
-        buffer.DrawText($"{label}: [{bar}] {progress * 100:F0}%", x, y, color);
-    }
-
-    private static void DrawIndeterminateBar(FrameBuffer buffer, int x, int y, int w, int frame, RGBA color)
-    {
-        var barWidth = w - 2;
-        var highlightWidth = 6;
-        var pos = (frame * 2) % (barWidth + highlightWidth) - highlightWidth;
-        
-        var bar = "";
-        for (int i = 0; i < barWidth; i++)
+        // Draw label
+        if (!string.IsNullOrEmpty(bar.Label))
         {
-            if (i >= pos && i < pos + highlightWidth)
-                bar += "█";
-            else
-                bar += "░";
+            buffer.DrawText($"{bar.Label}:", x, y, RGBA.FromHex("#aaaaaa"));
+            x += bar.Label.Length + 2;
         }
         
-        buffer.DrawText($"[{bar}]", x, y, color);
-    }
-
-    private static void DrawShimmeringText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        for (int i = 0; i < text.Length; i++)
+        // Draw bar with colors
+        buffer.DrawText("[", x, y, RGBA.White);
+        for (int i = 0; i < barPart.Length; i++)
         {
-            var shimmer = (float)(Math.Sin(time * 3 + i * 0.3) + 1) / 2;
-            var r = 0.5f + shimmer * 0.5f;
-            var g = 0.7f + shimmer * 0.3f;
-            var b = 1.0f;
-            buffer.SetCell(x + i, y, new Cell(text[i].ToString(), RGBA.FromValues(r, g, b)));
+            var color = i < filledCount ? bar.FilledColor : bar.EmptyColor;
+            buffer.SetCell(x + 1 + i, y, new Cell(barPart[i].ToString(), color));
         }
-    }
-
-    private static void DrawRainbowText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        for (int i = 0; i < text.Length; i++)
-        {
-            var hue = (time * 50 + i * 10) % 360;
-            var color = HsvToRgb(hue, 1.0, 1.0);
-            buffer.SetCell(x + i, y, new Cell(text[i].ToString(), color));
-        }
-    }
-
-    private static void DrawPulsingText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        var intensity = (float)(Math.Sin(time * 4) + 1) / 2 * 0.7f + 0.3f;
-        var color = RGBA.FromValues(intensity, intensity * 0.5f, intensity);
-        buffer.DrawText(text, x, y, color);
-    }
-
-    private static void DrawTypewriterText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        var charsToShow = (int)(time * 8) % (text.Length + 10);
-        var displayText = text[..Math.Min(charsToShow, text.Length)];
-        buffer.DrawText(displayText, x, y, RGBA.FromHex("#00ff00"));
+        buffer.DrawText("]", x + barPart.Length + 1, y, RGBA.White);
         
-        // Blinking cursor
-        if (charsToShow < text.Length && (int)(time * 4) % 2 == 0)
+        // Draw percentage
+        if (bar.ShowPercentage && !bar.IsIndeterminate)
         {
-            buffer.DrawText("▌", x + displayText.Length, y, RGBA.FromHex("#00ff00"));
+            buffer.DrawText($" {bar.Progress * 100:F0}%", x + barPart.Length + 2, y, RGBA.FromHex("#888888"));
         }
-    }
-
-    private static void DrawWaveText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        // Wave effect using color intensity instead of position to avoid overlap
-        for (int i = 0; i < text.Length; i++)
-        {
-            var wave = (float)(Math.Sin(time * 3 + i * 0.5) + 1) / 2;
-            var color = RGBA.FromValues(0.3f + wave * 0.7f, 0.6f + wave * 0.4f, 1.0f);
-            buffer.SetCell(x + i, y, new Cell(text[i].ToString(), color));
-        }
-    }
-
-    private static void DrawGlowingText(FrameBuffer buffer, string text, int x, int y, double time)
-    {
-        var glow = (float)(Math.Sin(time * 2) + 1) / 2;
-        var color = RGBA.FromValues(1.0f, 0.8f + glow * 0.2f, 0.2f + glow * 0.3f);
-        buffer.DrawText(text, x, y, color);
-    }
-
-    private static void DrawMatrixRain(FrameBuffer buffer, int x, int y, int w, int h, int frame)
-    {
-        // Use ASCII chars to avoid double-width character issues
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-        var random = new Random(42); // Fixed seed for consistent columns
-        
-        for (int col = 0; col < w; col++)
-        {
-            // Each column has its own speed and phase
-            var colSeed = random.Next(1000);
-            var speed = 1 + (colSeed % 3);
-            var phase = colSeed % 20;
-            var headPos = ((frame * speed / 2) + phase) % (h + 8) - 4;
-            
-            for (int row = 0; row < h; row++)
-            {
-                var charRandom = new Random(frame / 3 + col * 100 + row);
-                var ch = chars[charRandom.Next(chars.Length)];
-                var distFromHead = headPos - row;
-                
-                if (distFromHead >= 0 && distFromHead < 6)
-                {
-                    RGBA color;
-                    if (distFromHead == 0)
-                        color = RGBA.FromValues(0.9f, 1.0f, 0.9f); // Bright head
-                    else
-                    {
-                        var fade = 1.0f - (distFromHead / 6.0f);
-                        color = RGBA.FromValues(0, fade * 0.8f, 0);
-                    }
-                    buffer.SetCell(x + col, y + row, new Cell(ch.ToString(), color));
-                }
-                else if (distFromHead >= 6 && distFromHead < 12)
-                {
-                    // Fading tail
-                    var fade = 1.0f - ((distFromHead - 6) / 6.0f);
-                    buffer.SetCell(x + col, y + row, new Cell(ch.ToString(), RGBA.FromValues(0, fade * 0.3f, 0)));
-                }
-            }
-        }
-    }
-
-    private static RGBA HsvToRgb(double h, double s, double v)
-    {
-        var hi = (int)(h / 60) % 6;
-        var f = h / 60 - (int)(h / 60);
-        var p = v * (1 - s);
-        var q = v * (1 - f * s);
-        var t = v * (1 - (1 - f) * s);
-
-        return hi switch
-        {
-            0 => RGBA.FromValues((float)v, (float)t, (float)p),
-            1 => RGBA.FromValues((float)q, (float)v, (float)p),
-            2 => RGBA.FromValues((float)p, (float)v, (float)t),
-            3 => RGBA.FromValues((float)p, (float)q, (float)v),
-            4 => RGBA.FromValues((float)t, (float)p, (float)v),
-            _ => RGBA.FromValues((float)v, (float)p, (float)q)
-        };
     }
 }
