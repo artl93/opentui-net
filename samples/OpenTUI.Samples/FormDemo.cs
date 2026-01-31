@@ -1,8 +1,6 @@
 using OpenTUI.Core.Colors;
-using OpenTUI.Core.Layout;
-using OpenTUI.Core.Renderables;
 using OpenTUI.Core.Rendering;
-using BorderStyle = OpenTUI.Core.Renderables.BorderStyle;
+using OpenTUI.Core.Terminal;
 
 namespace OpenTUI.Samples;
 
@@ -13,125 +11,159 @@ public static class FormDemo
 {
     public static void Run()
     {
-        Console.Clear();
-        Console.WriteLine("=== OpenTUI.NET Form Demo ===\n");
-
-        // Create form layout
-        var form = CreateForm();
+        var state = new TerminalState();
         
-        // Calculate layout
-        form.Layout.CalculateLayout(60, 20);
-        
-        // Render to buffer
-        var buffer = new FrameBuffer(60, 20);
-        form.Render(buffer, 0, 0);
-        Console.WriteLine(buffer.ToSimpleAnsiString());
-        
-        Console.WriteLine("\n(This is a static preview - interactive mode coming soon)");
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey(true);
-    }
-
-    private static BoxRenderable CreateForm()
-    {
-        var form = new BoxRenderable
+        try
         {
-            BorderStyle = BorderStyle.Rounded,
-            BorderColor = RGBA.FromHex("#5588ff")
-        };
-        form.Layout.Width = FlexValue.Points(58);
-        form.Layout.Height = FlexValue.Auto;
-        form.Layout.FlexDirection = FlexDirection.Column;
-        form.Layout.Padding = new Edges(1, 2, 1, 2);
-        form.Layout.Gap = 1;
-        
-        // Title
-        var title = new TextRenderable("User Registration Form") { ForegroundColor = RGBA.White };
-        form.Add(title);
-        
-        var divider = new TextRenderable("─────────────────────────────────") { ForegroundColor = RGBA.FromHex("#444444") };
-        form.Add(divider);
-        
-        // Fields
-        form.Add(CreateField("Name:", "John Doe"));
-        form.Add(CreateField("Email:", "john@example.com"));
-        form.Add(CreateField("Password:", "••••••••"));
-        
-        // Checkboxes
-        form.Add(CreateCheckbox("Subscribe to newsletter", true));
-        form.Add(CreateCheckbox("I agree to the terms", false));
-        
-        var divider2 = new TextRenderable("─────────────────────────────────") { ForegroundColor = RGBA.FromHex("#444444") };
-        form.Add(divider2);
-        
-        // Button row
-        form.Add(CreateButtonRow());
-        
-        return form;
+            state.EnterAlternateScreen();
+            state.HideCursor();
+            
+            var size = TerminalSize.GetCurrent();
+            var width = Math.Min(size.Width, 60);
+            var height = Math.Min(size.Height, 22);
+            
+            var buffer = new FrameBuffer(width, height);
+            
+            // Fill background
+            buffer.FillRect(0, 0, width, height, RGBA.FromValues(0.05f, 0.05f, 0.1f));
+            
+            // Draw main form border
+            DrawBox(buffer, 0, 0, width, height, "User Registration Form", RGBA.FromHex("#5588ff"));
+            
+            // Form fields
+            int y = 3;
+            
+            // Name field
+            DrawLabel(buffer, 2, y, "Name:");
+            DrawInputBox(buffer, 14, y, width - 16, "John Doe");
+            y += 3;
+            
+            // Email field
+            DrawLabel(buffer, 2, y, "Email:");
+            DrawInputBox(buffer, 14, y, width - 16, "john@example.com");
+            y += 3;
+            
+            // Password field
+            DrawLabel(buffer, 2, y, "Password:");
+            DrawInputBox(buffer, 14, y, width - 16, "••••••••");
+            y += 3;
+            
+            // Country selector
+            DrawLabel(buffer, 2, y, "Country:");
+            DrawSelectBox(buffer, 14, y, width - 16, "United States ▼");
+            y += 3;
+            
+            // Checkboxes
+            DrawCheckbox(buffer, 2, y, "Subscribe to newsletter", true);
+            y += 2;
+            DrawCheckbox(buffer, 2, y, "I agree to the terms", false);
+            y += 2;
+            
+            // Separator
+            buffer.DrawText(new string('─', width - 4), 2, y, RGBA.FromHex("#444444"));
+            y += 2;
+            
+            // Buttons
+            DrawButton(buffer, width - 24, y, "Cancel", RGBA.FromHex("#666666"));
+            DrawButton(buffer, width - 12, y, "Submit", RGBA.FromHex("#00aa00"));
+            
+            // Status bar
+            buffer.FillRect(1, height - 2, width - 2, 1, RGBA.FromValues(0.15f, 0.15f, 0.2f));
+            buffer.DrawText("Tab: Next field | Enter: Submit | Esc: Cancel", 2, height - 2, RGBA.FromHex("#888888"));
+            
+            // Render
+            Console.Write(buffer.ToAnsiString());
+            Console.Out.Flush();
+            
+            Console.ReadKey(true);
+        }
+        finally
+        {
+            state.ShowCursor();
+            state.ExitAlternateScreen();
+        }
     }
 
-    private static BoxRenderable CreateField(string label, string value)
+    private static void DrawBox(FrameBuffer buffer, int x, int y, int w, int h, string title, RGBA color)
     {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.Gap = 1;
+        buffer.SetCell(x, y, new Cell("╭", color));
+        buffer.SetCell(x + w - 1, y, new Cell("╮", color));
+        buffer.SetCell(x, y + h - 1, new Cell("╰", color));
+        buffer.SetCell(x + w - 1, y + h - 1, new Cell("╯", color));
         
-        var labelText = new TextRenderable(label.PadRight(12)) { ForegroundColor = RGBA.FromHex("#aaaaaa") };
-        row.Add(labelText);
+        for (int i = 1; i < w - 1; i++)
+        {
+            buffer.SetCell(x + i, y, new Cell("─", color));
+            buffer.SetCell(x + i, y + h - 1, new Cell("─", color));
+        }
         
-        var valueBox = new BoxRenderable { BorderStyle = BorderStyle.Single, BorderColor = RGBA.FromHex("#666666") };
-        valueBox.Layout.Padding = new Edges(0, 1, 0, 1);
+        for (int j = 1; j < h - 1; j++)
+        {
+            buffer.SetCell(x, y + j, new Cell("│", color));
+            buffer.SetCell(x + w - 1, y + j, new Cell("│", color));
+        }
         
-        var valueText = new TextRenderable(value.PadRight(25)) { ForegroundColor = RGBA.White };
-        valueBox.Add(valueText);
-        row.Add(valueBox);
-        
-        return row;
+        if (!string.IsNullOrEmpty(title) && w > title.Length + 4)
+        {
+            buffer.DrawText($" {title} ", x + 2, y, color);
+        }
     }
 
-    private static BoxRenderable CreateCheckbox(string label, bool isChecked)
+    private static void DrawLabel(FrameBuffer buffer, int x, int y, string label)
     {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.Gap = 1;
+        buffer.DrawText(label.PadRight(12), x, y, RGBA.FromHex("#aaaaaa"));
+    }
+
+    private static void DrawInputBox(FrameBuffer buffer, int x, int y, int w, string value)
+    {
+        // Box border
+        buffer.SetCell(x, y - 1, new Cell("┌", RGBA.FromHex("#666666")));
+        buffer.SetCell(x + w - 1, y - 1, new Cell("┐", RGBA.FromHex("#666666")));
+        buffer.SetCell(x, y + 1, new Cell("└", RGBA.FromHex("#666666")));
+        buffer.SetCell(x + w - 1, y + 1, new Cell("┘", RGBA.FromHex("#666666")));
         
+        for (int i = 1; i < w - 1; i++)
+        {
+            buffer.SetCell(x + i, y - 1, new Cell("─", RGBA.FromHex("#666666")));
+            buffer.SetCell(x + i, y + 1, new Cell("─", RGBA.FromHex("#666666")));
+        }
+        buffer.SetCell(x, y, new Cell("│", RGBA.FromHex("#666666")));
+        buffer.SetCell(x + w - 1, y, new Cell("│", RGBA.FromHex("#666666")));
+        
+        // Value
+        var displayValue = value.Length > w - 4 ? value[..(w - 4)] : value;
+        buffer.DrawText(displayValue, x + 2, y, RGBA.White);
+    }
+
+    private static void DrawSelectBox(FrameBuffer buffer, int x, int y, int w, string value)
+    {
+        DrawInputBox(buffer, x, y, w, value);
+    }
+
+    private static void DrawCheckbox(FrameBuffer buffer, int x, int y, string label, bool isChecked)
+    {
         var checkmark = isChecked ? "☑" : "☐";
         var color = isChecked ? RGBA.FromHex("#00ff00") : RGBA.FromHex("#666666");
-        
-        var check = new TextRenderable(checkmark) { ForegroundColor = color };
-        row.Add(check);
-        
-        var labelText = new TextRenderable(label) { ForegroundColor = RGBA.FromHex("#dddddd") };
-        row.Add(labelText);
-        
-        return row;
+        buffer.DrawText(checkmark, x, y, color);
+        buffer.DrawText(label, x + 2, y, RGBA.FromHex("#dddddd"));
     }
 
-    private static BoxRenderable CreateButtonRow()
+    private static void DrawButton(FrameBuffer buffer, int x, int y, string text, RGBA color)
     {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.JustifyContent = JustifyContent.FlexEnd;
-        row.Layout.Gap = 2;
+        var w = text.Length + 4;
+        buffer.SetCell(x, y, new Cell("╭", color));
+        buffer.SetCell(x + w - 1, y, new Cell("╮", color));
+        buffer.SetCell(x, y + 1, new Cell("│", color));
+        buffer.SetCell(x + w - 1, y + 1, new Cell("│", color));
+        buffer.SetCell(x, y + 2, new Cell("╰", color));
+        buffer.SetCell(x + w - 1, y + 2, new Cell("╯", color));
         
-        row.Add(CreateButton("Cancel", RGBA.FromHex("#666666")));
-        row.Add(CreateButton("Submit", RGBA.FromHex("#00aa00")));
-        
-        return row;
-    }
-
-    private static BoxRenderable CreateButton(string text, RGBA color)
-    {
-        var button = new BoxRenderable
+        for (int i = 1; i < w - 1; i++)
         {
-            BorderStyle = BorderStyle.Rounded,
-            BorderColor = color
-        };
-        button.Layout.Padding = new Edges(0, 2, 0, 2);
+            buffer.SetCell(x + i, y, new Cell("─", color));
+            buffer.SetCell(x + i, y + 2, new Cell("─", color));
+        }
         
-        var label = new TextRenderable(text) { ForegroundColor = color };
-        button.Add(label);
-        
-        return button;
+        buffer.DrawText(text, x + 2, y + 1, color);
     }
 }

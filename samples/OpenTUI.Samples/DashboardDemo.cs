@@ -1,8 +1,6 @@
 using OpenTUI.Core.Colors;
-using OpenTUI.Core.Layout;
-using OpenTUI.Core.Renderables;
 using OpenTUI.Core.Rendering;
-using BorderStyle = OpenTUI.Core.Renderables.BorderStyle;
+using OpenTUI.Core.Terminal;
 
 namespace OpenTUI.Samples;
 
@@ -13,243 +11,133 @@ public static class DashboardDemo
 {
     public static void Run()
     {
-        // Use alternate screen mode for clean display
-        Console.Write("\x1b[?1049h"); // Enter alternate screen
-        Console.Write("\x1b[?25l");   // Hide cursor
+        var state = new TerminalState();
         
         try
         {
-            var dashboard = CreateDashboard();
-            dashboard.Layout.CalculateLayout(80, 24);
+            state.EnterAlternateScreen();
+            state.HideCursor();
             
-            var buffer = new FrameBuffer(80, 24);
-            buffer.Clear(RGBA.FromInts(20, 20, 30));
-            dashboard.Render(buffer, 0, 0);
+            var size = TerminalSize.GetCurrent();
+            var width = Math.Min(size.Width, 80);
+            var height = Math.Min(size.Height, 24);
             
-            Console.Write("\x1b[H"); // Move to home position
+            var buffer = new FrameBuffer(width, height);
+            
+            // Fill background
+            buffer.FillRect(0, 0, width, height, RGBA.FromInts(20, 20, 30));
+            
+            // Header
+            buffer.FillRect(0, 0, width, 1, RGBA.FromInts(30, 30, 50));
+            buffer.DrawText("📊 OpenTUI Dashboard", 2, 0, RGBA.FromHex("#00aaff"));
+            buffer.DrawText("v1.0.0", width - 8, 0, RGBA.FromHex("#666666"));
+            
+            // Sidebar
+            DrawBox(buffer, 1, 2, 16, height - 4, "Menu", RGBA.FromHex("#333355"));
+            DrawMenuItem(buffer, 2, 4, "🏠 Home", true);
+            DrawMenuItem(buffer, 2, 5, "📈 Analytics", false);
+            DrawMenuItem(buffer, 2, 6, "⚙️ Settings", false);
+            DrawMenuItem(buffer, 2, 7, "👤 Profile", false);
+            DrawMenuItem(buffer, 2, 8, "❓ Help", false);
+            
+            // Stats cards
+            var cardWidth = (width - 24) / 3;
+            DrawStatCard(buffer, 19, 2, cardWidth, "Users", "1,234", "+12%", RGBA.FromHex("#00ff88"));
+            DrawStatCard(buffer, 20 + cardWidth, 2, cardWidth, "Revenue", "$5,678", "+8%", RGBA.FromHex("#00aaff"));
+            DrawStatCard(buffer, 21 + cardWidth * 2, 2, cardWidth, "Orders", "89", "-3%", RGBA.FromHex("#ff6644"));
+            
+            // Bar chart
+            DrawBox(buffer, 19, 8, width - 42, height - 12, "Weekly Traffic", RGBA.FromHex("#333355"));
+            DrawBar(buffer, 21, 10, "Mon", 0.7);
+            DrawBar(buffer, 21, 11, "Tue", 0.5);
+            DrawBar(buffer, 21, 12, "Wed", 0.9);
+            DrawBar(buffer, 21, 13, "Thu", 0.6);
+            DrawBar(buffer, 21, 14, "Fri", 0.8);
+            
+            // Activity feed
+            DrawBox(buffer, width - 22, 8, 21, height - 12, "Activity", RGBA.FromHex("#333355"));
+            DrawActivityItem(buffer, width - 20, 10, "User signed up", "2m");
+            DrawActivityItem(buffer, width - 20, 11, "Order placed", "5m");
+            DrawActivityItem(buffer, width - 20, 12, "Payment recv", "12m");
+            DrawActivityItem(buffer, width - 20, 13, "Item shipped", "1h");
+            DrawActivityItem(buffer, width - 20, 14, "Review added", "2h");
+            
+            // Footer
+            buffer.FillRect(0, height - 1, width, 1, RGBA.FromInts(30, 30, 50));
+            buffer.DrawText("Press any key to exit", (width - 21) / 2, height - 1, RGBA.FromHex("#666666"));
+            
+            // Render
             Console.Write(buffer.ToAnsiString());
+            Console.Out.Flush();
             
             Console.ReadKey(true);
         }
         finally
         {
-            Console.Write("\x1b[?25h");   // Show cursor
-            Console.Write("\x1b[?1049l"); // Exit alternate screen
+            state.ShowCursor();
+            state.ExitAlternateScreen();
         }
     }
 
-    private static BoxRenderable CreateDashboard()
+    private static void DrawBox(FrameBuffer buffer, int x, int y, int w, int h, string title, RGBA color)
     {
-        var dashboard = new BoxRenderable { BorderStyle = BorderStyle.None };
-        dashboard.BackgroundColor = RGBA.FromInts(20, 20, 30);
-        dashboard.Layout.Width = FlexValue.Points(80);
-        dashboard.Layout.Height = FlexValue.Points(24);
-        dashboard.Layout.FlexDirection = FlexDirection.Column;
+        buffer.SetCell(x, y, new Cell("╭", color));
+        buffer.SetCell(x + w - 1, y, new Cell("╮", color));
+        buffer.SetCell(x, y + h - 1, new Cell("╰", color));
+        buffer.SetCell(x + w - 1, y + h - 1, new Cell("╯", color));
         
-        // Header
-        dashboard.Add(CreateHeader());
-        
-        // Main content area
-        var mainContent = new BoxRenderable { BorderStyle = BorderStyle.None };
-        mainContent.Layout.FlexDirection = FlexDirection.Row;
-        mainContent.Layout.FlexGrow = 1;
-        mainContent.Layout.Gap = 1;
-        mainContent.Layout.Padding = new Edges(1);
-        
-        mainContent.Add(CreateSidebar());
-        
-        var content = new BoxRenderable { BorderStyle = BorderStyle.None };
-        content.Layout.FlexDirection = FlexDirection.Column;
-        content.Layout.FlexGrow = 1;
-        content.Layout.Gap = 1;
-        content.Add(CreateStatsRow());
-        content.Add(CreateChartsRow());
-        mainContent.Add(content);
-        
-        dashboard.Add(mainContent);
-        dashboard.Add(CreateFooter());
-        
-        return dashboard;
-    }
-
-    private static BoxRenderable CreateHeader()
-    {
-        var header = new BoxRenderable { BorderStyle = BorderStyle.None };
-        header.BackgroundColor = RGBA.FromInts(30, 30, 50);
-        header.Layout.FlexDirection = FlexDirection.Row;
-        header.Layout.JustifyContent = JustifyContent.SpaceBetween;
-        header.Layout.AlignItems = AlignItems.Center;
-        header.Layout.Padding = new Edges(0, 2, 0, 2);
-        header.Layout.Height = FlexValue.Points(1);
-        
-        var title = new TextRenderable("📊 OpenTUI Dashboard") { ForegroundColor = RGBA.FromHex("#00aaff") };
-        header.Add(title);
-        
-        var version = new TextRenderable("v1.0.0") { ForegroundColor = RGBA.FromHex("#666666") };
-        header.Add(version);
-        
-        return header;
-    }
-
-    private static BoxRenderable CreateSidebar()
-    {
-        var sidebar = new BoxRenderable
+        for (int i = 1; i < w - 1; i++)
         {
-            BorderStyle = BorderStyle.Single,
-            BorderColor = RGBA.FromHex("#333355")
-        };
-        sidebar.Layout.Width = FlexValue.Points(16);
-        sidebar.Layout.FlexDirection = FlexDirection.Column;
-        sidebar.Layout.Padding = new Edges(1);
-        sidebar.Layout.Gap = 1;
+            buffer.SetCell(x + i, y, new Cell("─", color));
+            buffer.SetCell(x + i, y + h - 1, new Cell("─", color));
+        }
         
-        sidebar.Add(CreateMenuItem("🏠 Home", true));
-        sidebar.Add(CreateMenuItem("📈 Analytics", false));
-        sidebar.Add(CreateMenuItem("⚙️ Settings", false));
-        sidebar.Add(CreateMenuItem("👤 Profile", false));
+        for (int j = 1; j < h - 1; j++)
+        {
+            buffer.SetCell(x, y + j, new Cell("│", color));
+            buffer.SetCell(x + w - 1, y + j, new Cell("│", color));
+        }
         
-        return sidebar;
+        if (!string.IsNullOrEmpty(title) && w > title.Length + 4)
+        {
+            buffer.DrawText($" {title} ", x + 2, y, color);
+        }
     }
 
-    private static BoxRenderable CreateMenuItem(string text, bool isActive)
+    private static void DrawMenuItem(FrameBuffer buffer, int x, int y, string text, bool isActive)
     {
-        var item = new BoxRenderable { BorderStyle = BorderStyle.None };
-        item.BackgroundColor = isActive ? RGBA.FromInts(50, 50, 80) : null;
-        item.Layout.Padding = new Edges(0, 1, 0, 1);
-        
         var color = isActive ? RGBA.FromHex("#00aaff") : RGBA.FromHex("#888888");
-        var label = new TextRenderable(text) { ForegroundColor = color };
-        item.Add(label);
-        
-        return item;
-    }
-
-    private static BoxRenderable CreateStatsRow()
-    {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.Gap = 1;
-        row.Layout.Height = FlexValue.Points(5);
-        
-        row.Add(CreateStatCard("Users", "1,234", "+12%", RGBA.FromHex("#00ff88")));
-        row.Add(CreateStatCard("Revenue", "$5,678", "+8%", RGBA.FromHex("#00aaff")));
-        row.Add(CreateStatCard("Orders", "89", "-3%", RGBA.FromHex("#ff6644")));
-        
-        return row;
-    }
-
-    private static BoxRenderable CreateStatCard(string label, string value, string change, RGBA color)
-    {
-        var card = new BoxRenderable
+        if (isActive)
         {
-            BorderStyle = BorderStyle.Rounded,
-            BorderColor = RGBA.FromHex("#333355")
-        };
-        card.Layout.FlexGrow = 1;
-        card.Layout.Padding = new Edges(1);
-        card.Layout.FlexDirection = FlexDirection.Column;
-        
-        card.Add(new TextRenderable(label) { ForegroundColor = RGBA.FromHex("#888888") });
-        card.Add(new TextRenderable(value) { ForegroundColor = color });
+            buffer.FillRect(x, y, 14, 1, RGBA.FromInts(50, 50, 80));
+        }
+        buffer.DrawText(text, x + 1, y, color);
+    }
+
+    private static void DrawStatCard(FrameBuffer buffer, int x, int y, int w, string label, string value, string change, RGBA color)
+    {
+        DrawBox(buffer, x, y, w, 5, "", RGBA.FromHex("#333355"));
+        buffer.DrawText(label, x + 2, y + 1, RGBA.FromHex("#888888"));
+        buffer.DrawText(value, x + 2, y + 2, color);
         
         var changeColor = change.StartsWith("+") ? RGBA.FromHex("#00ff88") : RGBA.FromHex("#ff4444");
-        card.Add(new TextRenderable(change) { ForegroundColor = changeColor });
-        
-        return card;
+        buffer.DrawText(change, x + 2, y + 3, changeColor);
     }
 
-    private static BoxRenderable CreateChartsRow()
+    private static void DrawBar(FrameBuffer buffer, int x, int y, string label, double value)
     {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.FlexGrow = 1;
-        row.Layout.Gap = 1;
+        buffer.DrawText(label.PadRight(4), x, y, RGBA.FromHex("#666666"));
         
-        row.Add(CreateBarChart());
-        row.Add(CreateActivityFeed());
-        
-        return row;
+        var barWidth = 15;
+        var filledWidth = (int)(value * barWidth);
+        var bar = new string('█', filledWidth) + new string('░', barWidth - filledWidth);
+        buffer.DrawText(bar, x + 5, y, RGBA.FromHex("#00aaff"));
     }
 
-    private static BoxRenderable CreateBarChart()
+    private static void DrawActivityItem(FrameBuffer buffer, int x, int y, string text, string time)
     {
-        var chart = new BoxRenderable
-        {
-            BorderStyle = BorderStyle.Rounded,
-            BorderColor = RGBA.FromHex("#333355")
-        };
-        chart.Layout.FlexGrow = 1;
-        chart.Layout.Padding = new Edges(1);
-        chart.Layout.FlexDirection = FlexDirection.Column;
-        chart.Layout.Gap = 1;
-        
-        chart.Add(new TextRenderable("Weekly Traffic") { ForegroundColor = RGBA.White });
-        chart.Add(CreateBar("Mon", 0.7));
-        chart.Add(CreateBar("Tue", 0.5));
-        chart.Add(CreateBar("Wed", 0.9));
-        chart.Add(CreateBar("Thu", 0.6));
-        
-        return chart;
-    }
-
-    private static BoxRenderable CreateBar(string label, double value)
-    {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.Gap = 1;
-        
-        var barWidth = (int)(value * 15);
-        var bar = new string('█', barWidth) + new string('░', 15 - barWidth);
-        
-        row.Add(new TextRenderable(label.PadRight(4)) { ForegroundColor = RGBA.FromHex("#666666") });
-        row.Add(new TextRenderable(bar) { ForegroundColor = RGBA.FromHex("#00aaff") });
-        
-        return row;
-    }
-
-    private static BoxRenderable CreateActivityFeed()
-    {
-        var feed = new BoxRenderable
-        {
-            BorderStyle = BorderStyle.Rounded,
-            BorderColor = RGBA.FromHex("#333355")
-        };
-        feed.Layout.Width = FlexValue.Points(22);
-        feed.Layout.Padding = new Edges(1);
-        feed.Layout.FlexDirection = FlexDirection.Column;
-        feed.Layout.Gap = 1;
-        
-        feed.Add(new TextRenderable("Recent Activity") { ForegroundColor = RGBA.White });
-        feed.Add(CreateActivityItem("User signed up", "2m"));
-        feed.Add(CreateActivityItem("Order placed", "5m"));
-        feed.Add(CreateActivityItem("Payment received", "12m"));
-        
-        return feed;
-    }
-
-    private static BoxRenderable CreateActivityItem(string text, string time)
-    {
-        var row = new BoxRenderable { BorderStyle = BorderStyle.None };
-        row.Layout.FlexDirection = FlexDirection.Row;
-        row.Layout.JustifyContent = JustifyContent.SpaceBetween;
-        
-        row.Add(new TextRenderable($"• {text}") { ForegroundColor = RGBA.FromHex("#aaaaaa") });
-        row.Add(new TextRenderable(time) { ForegroundColor = RGBA.FromHex("#666666") });
-        
-        return row;
-    }
-
-    private static BoxRenderable CreateFooter()
-    {
-        var footer = new BoxRenderable { BorderStyle = BorderStyle.None };
-        footer.BackgroundColor = RGBA.FromInts(30, 30, 50);
-        footer.Layout.Padding = new Edges(0, 2, 0, 2);
-        footer.Layout.FlexDirection = FlexDirection.Row;
-        footer.Layout.JustifyContent = JustifyContent.Center;
-        footer.Layout.Height = FlexValue.Points(1);
-        
-        footer.Add(new TextRenderable("Press any key to exit") { ForegroundColor = RGBA.FromHex("#666666") });
-        
-        return footer;
+        buffer.DrawText("•", x, y, RGBA.FromHex("#666666"));
+        buffer.DrawText(text, x + 2, y, RGBA.FromHex("#aaaaaa"));
+        buffer.DrawText(time, x + 16, y, RGBA.FromHex("#666666"));
     }
 }
