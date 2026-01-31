@@ -6,11 +6,30 @@ using OpenTUI.Core.Renderables;
 using OpenTUI.Core.Rendering;
 using OpenTUI.Core.Terminal;
 
-// Check for --visual flag
-if (args.Length > 0 && args[0] == "--visual")
+// Check for demo flags
+if (args.Length > 0)
 {
-    OpenTUI.Samples.VisualDemo.Run();
-    return;
+    switch (args[0])
+    {
+        case "--visual":
+            OpenTUI.Samples.VisualDemo.Run();
+            return;
+        case "--form":
+            OpenTUI.Samples.FormDemo.Run();
+            return;
+        case "--dashboard":
+            OpenTUI.Samples.DashboardDemo.Run();
+            return;
+        case "--help":
+            Console.WriteLine("OpenTUI.NET Sample Demos");
+            Console.WriteLine("========================");
+            Console.WriteLine("  (no args)    Text-based demo (safe for any terminal)");
+            Console.WriteLine("  --visual     Visual demo with alternate screen");
+            Console.WriteLine("  --form       Form input demo");
+            Console.WriteLine("  --dashboard  Dashboard widget demo");
+            Console.WriteLine("  --help       Show this help");
+            return;
+    }
 }
 
 // Create a log file for debugging
@@ -174,8 +193,13 @@ try
     Log("Demo 7: Complete");
 
     Console.WriteLine("✅ All demos completed successfully!");
-    Console.WriteLine($"   Total test coverage: 403 tests passing");
+    Console.WriteLine($"   Total test coverage: 465 tests passing");
     Console.WriteLine($"   Log file: {logFile}");
+    Console.WriteLine();
+    Console.WriteLine("Try other demos:");
+    Console.WriteLine("   dotnet run -- --visual     (colorful visual demo)");
+    Console.WriteLine("   dotnet run -- --form       (form input demo)");
+    Console.WriteLine("   dotnet run -- --dashboard  (dashboard widget demo)");
     Console.WriteLine();
     
     Log("Demo completed successfully");
