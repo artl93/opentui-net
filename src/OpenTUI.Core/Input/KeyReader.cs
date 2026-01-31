@@ -1,3 +1,5 @@
+using SysConsole = System.Console;
+
 namespace OpenTUI.Core.Input;
 
 /// <summary>
@@ -19,10 +21,10 @@ public class KeyReader : IDisposable
     /// </summary>
     public KeyEvent? ReadKey(bool intercept = true)
     {
-        if (!Console.KeyAvailable)
+        if (!SysConsole.KeyAvailable)
             return null;
 
-        var keyInfo = Console.ReadKey(intercept);
+        var keyInfo = SysConsole.ReadKey(intercept);
         return AnsiKeyParser.FromConsoleKeyInfo(keyInfo);
     }
 
@@ -43,9 +45,9 @@ public class KeyReader : IDisposable
                 
                 while (!linkedCts.Token.IsCancellationRequested)
                 {
-                    if (Console.KeyAvailable)
+                    if (SysConsole.KeyAvailable)
                     {
-                        var keyInfo = Console.ReadKey(true);
+                        var keyInfo = SysConsole.ReadKey(true);
                         return AnsiKeyParser.FromConsoleKeyInfo(keyInfo);
                     }
                     
@@ -93,7 +95,7 @@ public class KeyReader : IDisposable
     /// <summary>
     /// Checks if a key is available without blocking.
     /// </summary>
-    public bool KeyAvailable => Console.KeyAvailable;
+    public bool KeyAvailable => SysConsole.KeyAvailable;
 
     /// <summary>
     /// Reads all available input and parses it.
@@ -103,9 +105,9 @@ public class KeyReader : IDisposable
     {
         var buffer = new List<char>();
         
-        while (Console.KeyAvailable)
+        while (SysConsole.KeyAvailable)
         {
-            var keyInfo = Console.ReadKey(true);
+            var keyInfo = SysConsole.ReadKey(true);
             buffer.Add(keyInfo.KeyChar);
         }
 

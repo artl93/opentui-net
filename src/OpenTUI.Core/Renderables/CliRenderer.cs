@@ -3,6 +3,7 @@ using OpenTUI.Core.Colors;
 using OpenTUI.Core.Layout;
 using OpenTUI.Core.Rendering;
 using OpenTUI.Core.Terminal;
+using SysConsole = System.Console;
 
 namespace OpenTUI.Core.Renderables;
 
@@ -99,7 +100,7 @@ public class CliRenderer : IDisposable
     private CliRenderer(CliRendererOptions options, TerminalCapabilities? capabilities = null)
     {
         _options = options;
-        _terminal = new TerminalState(Console.Out, capabilities);
+        _terminal = new TerminalState(SysConsole.Out, capabilities);
         
         Size = TerminalSize.GetCurrent();
         _buffer = new FrameBuffer(Size.Width, Size.Height);

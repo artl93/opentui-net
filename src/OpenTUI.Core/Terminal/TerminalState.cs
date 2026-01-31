@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenTUI.Core.Rendering;
+using SysConsole = System.Console;
 
 namespace OpenTUI.Core.Terminal;
 
@@ -24,7 +25,7 @@ public sealed class TerminalState : IDisposable
 
     public TerminalState(TextWriter? output = null, TerminalCapabilities? capabilities = null)
     {
-        _output = output ?? Console.Out;
+        _output = output ?? SysConsole.Out;
         _capabilities = capabilities ?? TerminalCapabilities.Detect();
     }
 
@@ -223,8 +224,8 @@ public sealed class TerminalState : IDisposable
         // On Windows, we primarily need to handle Console settings
         try
         {
-            Console.TreatControlCAsInput = true;
-            Console.CursorVisible = false;
+            SysConsole.TreatControlCAsInput = true;
+            SysConsole.CursorVisible = false;
         }
         catch
         {
@@ -236,8 +237,8 @@ public sealed class TerminalState : IDisposable
     {
         try
         {
-            Console.TreatControlCAsInput = false;
-            Console.CursorVisible = true;
+            SysConsole.TreatControlCAsInput = false;
+            SysConsole.CursorVisible = true;
         }
         catch
         {

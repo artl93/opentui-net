@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using SysConsole = System.Console;
 
 namespace OpenTUI.Core.Terminal;
 
@@ -27,9 +28,9 @@ public class TerminalSize
         try
         {
             // Try Console class first (works on most platforms)
-            if (Console.WindowWidth > 0 && Console.WindowHeight > 0)
+            if (SysConsole.WindowWidth > 0 && SysConsole.WindowHeight > 0)
             {
-                return new TerminalSize(Console.WindowWidth, Console.WindowHeight);
+                return new TerminalSize(SysConsole.WindowWidth, SysConsole.WindowHeight);
             }
         }
         catch
