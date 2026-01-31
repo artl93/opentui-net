@@ -109,26 +109,26 @@ public static class AnimationDemo
                 buffer.DrawText("Installing...", 36, 10, RGBA.FromHex("#888888"));
                 
                 // Text effects section
-                DrawBox(buffer, 2, 14, width - 4, 8, "Text Effects", RGBA.FromHex("#aa44ff"));
+                DrawBox(buffer, 2, 14, width - 4, 10, "Text Effects", RGBA.FromHex("#aa44ff"));
                 
                 // Rainbow text
-                DrawRainbowText(buffer, "Rainbow gradient text effect!", 4, 16, elapsed);
+                DrawRainbowText(buffer, "Rainbow gradient text - cycling through hues", 4, 16, elapsed);
+                
+                // Wave text (color wave, not position wave)
+                DrawWaveText(buffer, "Wave intensity text effect", 4, 18, elapsed);
                 
                 // Pulsing text
-                DrawPulsingText(buffer, "Pulsing intensity", 4, 18, elapsed);
+                DrawPulsingText(buffer, "Pulsing brightness", 4, 20, elapsed);
                 
                 // Typewriter effect
-                DrawTypewriterText(buffer, "Typewriter effect simulates typing...", 4, 20, elapsed);
+                DrawTypewriterText(buffer, "Typewriter effect simulates typing...", 4, 22, elapsed);
                 
-                // Wave text
-                DrawWaveText(buffer, "~ Wavy text animation ~", width / 2 - 12, 16, elapsed);
-                
-                // Glowing text
-                DrawGlowingText(buffer, "★ Glowing Star Text ★", width / 2, 18, elapsed);
+                // Glowing text on right side
+                DrawGlowingText(buffer, "★ Glowing Star Text ★", width - 26, 18, elapsed);
                 
                 // Matrix rain effect in a small area
-                DrawBox(buffer, 2, height - 8, 25, 6, "Matrix", RGBA.Green);
-                DrawMatrixRain(buffer, 3, height - 7, 23, 4, frame);
+                DrawBox(buffer, 2, height - 10, 30, 8, "Matrix Rain", RGBA.Green);
+                DrawMatrixRain(buffer, 3, height - 9, 28, 6, frame);
                 
                 // Status section
                 buffer.FillRect(0, height - 2, width, 1, RGBA.FromValues(0.15f, 0.15f, 0.2f));
@@ -253,14 +253,12 @@ public static class AnimationDemo
 
     private static void DrawWaveText(FrameBuffer buffer, string text, int x, int y, double time)
     {
+        // Wave effect using color intensity instead of position to avoid overlap
         for (int i = 0; i < text.Length; i++)
         {
-            var yOffset = (int)(Math.Sin(time * 3 + i * 0.5) * 1.5);
-            var color = RGBA.FromHex("#44aaff");
-            if (y + yOffset >= 0 && y + yOffset < buffer.Height)
-            {
-                buffer.SetCell(x + i, y + yOffset, new Cell(text[i].ToString(), color));
-            }
+            var wave = (float)(Math.Sin(time * 3 + i * 0.5) + 1) / 2;
+            var color = RGBA.FromValues(0.3f + wave * 0.7f, 0.6f + wave * 0.4f, 1.0f);
+            buffer.SetCell(x + i, y, new Cell(text[i].ToString(), color));
         }
     }
 
@@ -268,32 +266,46 @@ public static class AnimationDemo
     {
         var glow = (float)(Math.Sin(time * 2) + 1) / 2;
         var color = RGBA.FromValues(1.0f, 0.8f + glow * 0.2f, 0.2f + glow * 0.3f);
-        buffer.DrawText(text, x - text.Length / 2, y, color);
+        buffer.DrawText(text, x, y, color);
     }
 
     private static void DrawMatrixRain(FrameBuffer buffer, int x, int y, int w, int h, int frame)
     {
-        var random = new Random(42); // Fixed seed for consistent "rain"
-        var chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
+        // Use ASCII chars to avoid double-width character issues
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+        var random = new Random(42); // Fixed seed for consistent columns
         
         for (int col = 0; col < w; col++)
         {
-            var speed = random.Next(1, 4);
-            var offset = (frame * speed / 3 + random.Next(100)) % (h + 5);
+            // Each column has its own speed and phase
+            var colSeed = random.Next(1000);
+            var speed = 1 + (colSeed % 3);
+            var phase = colSeed % 20;
+            var headPos = ((frame * speed / 2) + phase) % (h + 8) - 4;
             
             for (int row = 0; row < h; row++)
             {
-                var charIdx = random.Next(chars.Length);
-                var distFromHead = offset - row;
+                var charRandom = new Random(frame / 3 + col * 100 + row);
+                var ch = chars[charRandom.Next(chars.Length)];
+                var distFromHead = headPos - row;
                 
-                if (distFromHead >= 0 && distFromHead < 5)
+                if (distFromHead >= 0 && distFromHead < 6)
                 {
-                    var intensity = 1.0f - (distFromHead / 5.0f);
-                    var color = RGBA.FromValues(0, intensity, 0);
+                    RGBA color;
                     if (distFromHead == 0)
-                        color = RGBA.FromValues(0.7f, 1.0f, 0.7f); // Bright head
-                    
-                    buffer.SetCell(x + col, y + row, new Cell(chars[charIdx].ToString(), color));
+                        color = RGBA.FromValues(0.9f, 1.0f, 0.9f); // Bright head
+                    else
+                    {
+                        var fade = 1.0f - (distFromHead / 6.0f);
+                        color = RGBA.FromValues(0, fade * 0.8f, 0);
+                    }
+                    buffer.SetCell(x + col, y + row, new Cell(ch.ToString(), color));
+                }
+                else if (distFromHead >= 6 && distFromHead < 12)
+                {
+                    // Fading tail
+                    var fade = 1.0f - ((distFromHead - 6) / 6.0f);
+                    buffer.SetCell(x + col, y + row, new Cell(ch.ToString(), RGBA.FromValues(0, fade * 0.3f, 0)));
                 }
             }
         }
