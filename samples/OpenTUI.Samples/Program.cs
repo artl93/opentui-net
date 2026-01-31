@@ -6,6 +6,13 @@ using OpenTUI.Core.Renderables;
 using OpenTUI.Core.Rendering;
 using OpenTUI.Core.Terminal;
 
+// Check for --visual flag
+if (args.Length > 0 && args[0] == "--visual")
+{
+    OpenTUI.Samples.VisualDemo.Run();
+    return;
+}
+
 // Create a log file for debugging
 var logFile = Path.Combine(Path.GetTempPath(), "opentui-demo.log");
 var log = new StreamWriter(logFile, append: false) { AutoFlush = true };
