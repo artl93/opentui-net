@@ -75,20 +75,29 @@ public static class AnimationDemo
                 buffer.DrawText(bouncingSpinner.CurrentFrame, 4, 11, RGBA.Magenta);
                 
                 // === Progress Bars Section ===
-                var progressBoxWidth = Math.Min(width - 36, 50);
-                DrawBox(buffer, 34, 3, progressBoxWidth, 10, "Progress Bars", RGBA.FromHex("#ff6644"));
+                var progressBoxX = 34;
+                var progressBoxWidth = Math.Min(width - progressBoxX - 2, 50);
+                var progressBoxMaxX = progressBoxX + progressBoxWidth - 2; // Leave room for right border
+                var progressBarWidth = progressBoxWidth - 20; // Account for label, brackets, percentage, padding
+                var indeterminateBarWidth = progressBoxWidth - 6; // No label or percentage, just brackets + padding
+                DrawBox(buffer, progressBoxX, 3, progressBoxWidth, 10, "Progress Bars", RGBA.FromHex("#ff6644"));
+                
+                // Update bar widths to fit
+                downloadBar.Width = progressBarWidth;
+                uploadBar.Width = progressBarWidth;
+                installBar.Width = indeterminateBarWidth;
                 
                 // Determinate progress bars
                 downloadBar.Progress = (Math.Sin(elapsed * 0.5) + 1) / 2;
-                DrawProgressBar(buffer, 36, 5, downloadBar);
+                DrawProgressBar(buffer, progressBoxX + 2, 5, downloadBar, progressBoxMaxX);
                 
                 uploadBar.Progress = (elapsed % 5) / 5;
-                DrawProgressBar(buffer, 36, 7, uploadBar);
+                DrawProgressBar(buffer, progressBoxX + 2, 7, uploadBar, progressBoxMaxX);
                 
                 // Indeterminate progress bar
                 installBar.Update();
-                DrawProgressBar(buffer, 36, 9, installBar);
-                buffer.DrawText("Installing...", 36, 10, RGBA.FromHex("#888888"));
+                DrawProgressBar(buffer, progressBoxX + 2, 9, installBar, progressBoxMaxX);
+                buffer.DrawText("Installing...", progressBoxX + 2, 10, RGBA.FromHex("#888888"));
                 
                 // === Text Effects Section ===
                 DrawBox(buffer, 2, 14, width - 4, 10, "Text Effects", RGBA.FromHex("#aa44ff"));
@@ -132,11 +141,13 @@ public static class AnimationDemo
                 }
                 
                 // === Easing Visualization ===
-                DrawBox(buffer, 2, height - 8, 30, 6, "Easing Demo", RGBA.FromHex("#88ff88"));
+                var easingBoxWidth = 28;
+                DrawBox(buffer, 2, height - 8, easingBoxWidth, 6, "Easing Demo", RGBA.FromHex("#88ff88"));
                 var t = (float)((elapsed % 2) / 2); // 0-1 over 2 seconds
-                var linearPos = (int)(Easing.Linear(t) * 20);
-                var bouncePos = (int)(Easing.OutBounce(t) * 20);
-                var elasticPos = (int)(Math.Clamp(Easing.OutElastic(t), 0, 1) * 20);
+                var maxDotPos = easingBoxWidth - 14; // "Linear:  " is 9 chars, leave room for ● and border
+                var linearPos = (int)(Easing.Linear(t) * maxDotPos);
+                var bouncePos = (int)(Easing.OutBounce(t) * maxDotPos);
+                var elasticPos = (int)(Math.Clamp(Easing.OutElastic(t), 0, 1) * maxDotPos);
                 
                 buffer.DrawText("Linear:  " + new string(' ', linearPos) + "●", 4, height - 6, RGBA.White);
                 buffer.DrawText("Bounce:  " + new string(' ', bouncePos) + "●", 4, height - 5, RGBA.Yellow);
@@ -193,7 +204,7 @@ public static class AnimationDemo
         }
     }
 
-    private static void DrawProgressBar(FrameBuffer buffer, int x, int y, ProgressBar bar)
+    private static void DrawProgressBar(FrameBuffer buffer, int x, int y, ProgressBar bar, int maxX)
     {
         var (barPart, filledCount) = bar.GetBarParts();
         
@@ -204,19 +215,22 @@ public static class AnimationDemo
             x += bar.Label.Length + 2;
         }
         
-        // Draw bar with colors
-        buffer.DrawText("[", x, y, RGBA.White);
-        for (int i = 0; i < barPart.Length; i++)
+        // Draw bar with colors, respecting maxX boundary
+        if (x < maxX) buffer.DrawText("[", x, y, RGBA.White);
+        for (int i = 0; i < barPart.Length && x + 1 + i < maxX; i++)
         {
             var color = i < filledCount ? bar.FilledColor : bar.EmptyColor;
             buffer.SetCell(x + 1 + i, y, new Cell(barPart[i].ToString(), color));
         }
-        buffer.DrawText("]", x + barPart.Length + 1, y, RGBA.White);
+        var closeBracketX = x + barPart.Length + 1;
+        if (closeBracketX < maxX) buffer.DrawText("]", closeBracketX, y, RGBA.White);
         
         // Draw percentage
         if (bar.ShowPercentage && !bar.IsIndeterminate)
         {
-            buffer.DrawText($" {bar.Progress * 100:F0}%", x + barPart.Length + 2, y, RGBA.FromHex("#888888"));
+            var pctX = x + barPart.Length + 2;
+            if (pctX < maxX - 4)
+                buffer.DrawText($" {bar.Progress * 100:F0}%", pctX, y, RGBA.FromHex("#888888"));
         }
     }
 }

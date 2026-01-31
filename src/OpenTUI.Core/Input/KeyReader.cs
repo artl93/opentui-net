@@ -14,7 +14,9 @@ public class KeyReader : IDisposable
     public event EventHandler<KeyEvent>? KeyPressed;
 
     /// <summary>Event raised when text is pasted (bracketed paste mode).</summary>
+#pragma warning disable CS0067 // Not yet implemented
     public event EventHandler<string>? TextPasted;
+#pragma warning restore CS0067
 
     /// <summary>
     /// Reads a single key synchronously.

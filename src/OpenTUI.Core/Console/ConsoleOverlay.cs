@@ -12,8 +12,10 @@ namespace OpenTUI.Core.Console;
 public class ConsoleOverlay : Renderable, IDisposable
 {
     private readonly LogBuffer _logBuffer;
+#pragma warning disable CS0649 // Not yet implemented
     private ConsoleInterceptor? _stdOutInterceptor;
     private ConsoleInterceptor? _stdErrInterceptor;
+#pragma warning restore CS0649
     
     private int _scrollOffset;
     private LogLevel _minLevel = LogLevel.Debug;
