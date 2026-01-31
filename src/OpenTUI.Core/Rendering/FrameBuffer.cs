@@ -274,6 +274,41 @@ public class FrameBuffer
     }
 
     /// <summary>
+    /// Generates simple ANSI output with newlines (for inline console output).
+    /// Unlike ToAnsiString(), this doesn't use cursor positioning.
+    /// </summary>
+    public string ToSimpleAnsiString()
+    {
+        var sb = new StringBuilder();
+        RGBA? lastFg = null;
+        RGBA? lastBg = null;
+
+        for (var r = 0; r < Height; r++)
+        {
+            for (var c = 0; c < Width; c++)
+            {
+                var cell = _cells[r, c];
+                if (cell.Width == 0) continue;
+
+                if (lastFg != cell.Foreground || lastBg != cell.Background)
+                {
+                    sb.Append(Ansi.SetStyle(cell.Foreground, cell.Background));
+                    lastFg = cell.Foreground;
+                    lastBg = cell.Background;
+                }
+
+                sb.Append(string.IsNullOrEmpty(cell.Character) ? " " : cell.Character);
+            }
+            sb.Append(Ansi.Reset);
+            sb.AppendLine();
+            lastFg = null;
+            lastBg = null;
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
     /// Generates ANSI output for only dirty cells (differential update).
     /// </summary>
     public string ToDifferentialAnsiString()
