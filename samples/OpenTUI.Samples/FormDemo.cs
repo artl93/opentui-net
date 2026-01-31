@@ -19,8 +19,8 @@ public static class FormDemo
             state.HideCursor();
             
             var size = TerminalSize.GetCurrent();
-            var width = Math.Min(size.Width, 60);
-            var height = Math.Min(size.Height, 22);
+            var width = size.Width;
+            var height = size.Height;
             
             var buffer = new FrameBuffer(width, height);
             
@@ -30,44 +30,51 @@ public static class FormDemo
             // Draw main form border
             DrawBox(buffer, 0, 0, width, height, "User Registration Form", RGBA.FromHex("#5588ff"));
             
+            // Calculate form content area
+            var formWidth = Math.Min(width - 4, 70);
+            var formX = (width - formWidth) / 2;
+            
             // Form fields
             int y = 3;
+            int fieldWidth = formWidth - 14;
             
             // Name field
-            DrawLabel(buffer, 2, y, "Name:");
-            DrawInputBox(buffer, 14, y, width - 16, "John Doe");
+            DrawLabel(buffer, formX, y, "Name:");
+            DrawInputBox(buffer, formX + 12, y, fieldWidth, "John Doe");
             y += 3;
             
             // Email field
-            DrawLabel(buffer, 2, y, "Email:");
-            DrawInputBox(buffer, 14, y, width - 16, "john@example.com");
+            DrawLabel(buffer, formX, y, "Email:");
+            DrawInputBox(buffer, formX + 12, y, fieldWidth, "john@example.com");
             y += 3;
             
             // Password field
-            DrawLabel(buffer, 2, y, "Password:");
-            DrawInputBox(buffer, 14, y, width - 16, "••••••••");
+            DrawLabel(buffer, formX, y, "Password:");
+            DrawInputBox(buffer, formX + 12, y, fieldWidth, "••••••••");
             y += 3;
             
             // Country selector
-            DrawLabel(buffer, 2, y, "Country:");
-            DrawSelectBox(buffer, 14, y, width - 16, "United States ▼");
-            y += 3;
+            DrawLabel(buffer, formX, y, "Country:");
+            DrawSelectBox(buffer, formX + 12, y, fieldWidth, "United States ▼");
+            y += 4;
             
             // Checkboxes
-            DrawCheckbox(buffer, 2, y, "Subscribe to newsletter", true);
+            DrawCheckbox(buffer, formX, y, "Subscribe to newsletter", true);
             y += 2;
-            DrawCheckbox(buffer, 2, y, "I agree to the terms", false);
-            y += 2;
+            DrawCheckbox(buffer, formX, y, "I agree to the terms and conditions", false);
+            y += 3;
             
             // Separator
-            buffer.DrawText(new string('─', width - 4), 2, y, RGBA.FromHex("#444444"));
+            buffer.DrawText(new string('─', formWidth), formX, y, RGBA.FromHex("#444444"));
             y += 2;
             
-            // Buttons
-            DrawButton(buffer, width - 24, y, "Cancel", RGBA.FromHex("#666666"));
-            DrawButton(buffer, width - 12, y, "Submit", RGBA.FromHex("#00aa00"));
+            // Buttons - positioned relative to form width
+            var cancelX = formX + formWidth - 22;
+            var submitX = formX + formWidth - 10;
+            DrawButton(buffer, cancelX, y, "Cancel", RGBA.FromHex("#888888"));
+            DrawButton(buffer, submitX, y, "Submit", RGBA.FromHex("#00cc00"));
             
-            // Status bar
+            // Status bar at bottom
             buffer.FillRect(1, height - 2, width - 2, 1, RGBA.FromValues(0.15f, 0.15f, 0.2f));
             buffer.DrawText("Tab: Next field | Enter: Submit | Esc: Cancel", 2, height - 2, RGBA.FromHex("#888888"));
             
@@ -111,24 +118,29 @@ public static class FormDemo
 
     private static void DrawLabel(FrameBuffer buffer, int x, int y, string label)
     {
-        buffer.DrawText(label.PadRight(12), x, y, RGBA.FromHex("#aaaaaa"));
+        buffer.DrawText(label.PadRight(11), x, y, RGBA.FromHex("#aaaaaa"));
     }
 
     private static void DrawInputBox(FrameBuffer buffer, int x, int y, int w, string value)
     {
-        // Box border
-        buffer.SetCell(x, y - 1, new Cell("┌", RGBA.FromHex("#666666")));
-        buffer.SetCell(x + w - 1, y - 1, new Cell("┐", RGBA.FromHex("#666666")));
-        buffer.SetCell(x, y + 1, new Cell("└", RGBA.FromHex("#666666")));
-        buffer.SetCell(x + w - 1, y + 1, new Cell("┘", RGBA.FromHex("#666666")));
+        var boxColor = RGBA.FromHex("#555555");
         
+        // Box border (single line, not 3 rows)
+        buffer.SetCell(x, y, new Cell("│", boxColor));
+        buffer.SetCell(x + w - 1, y, new Cell("│", boxColor));
+        
+        // Top and bottom borders
         for (int i = 1; i < w - 1; i++)
         {
-            buffer.SetCell(x + i, y - 1, new Cell("─", RGBA.FromHex("#666666")));
-            buffer.SetCell(x + i, y + 1, new Cell("─", RGBA.FromHex("#666666")));
+            buffer.SetCell(x + i, y - 1, new Cell("─", boxColor));
+            buffer.SetCell(x + i, y + 1, new Cell("─", boxColor));
         }
-        buffer.SetCell(x, y, new Cell("│", RGBA.FromHex("#666666")));
-        buffer.SetCell(x + w - 1, y, new Cell("│", RGBA.FromHex("#666666")));
+        
+        // Corners
+        buffer.SetCell(x, y - 1, new Cell("┌", boxColor));
+        buffer.SetCell(x + w - 1, y - 1, new Cell("┐", boxColor));
+        buffer.SetCell(x, y + 1, new Cell("└", boxColor));
+        buffer.SetCell(x + w - 1, y + 1, new Cell("┘", boxColor));
         
         // Value
         var displayValue = value.Length > w - 4 ? value[..(w - 4)] : value;
@@ -150,20 +162,7 @@ public static class FormDemo
 
     private static void DrawButton(FrameBuffer buffer, int x, int y, string text, RGBA color)
     {
-        var w = text.Length + 4;
-        buffer.SetCell(x, y, new Cell("╭", color));
-        buffer.SetCell(x + w - 1, y, new Cell("╮", color));
-        buffer.SetCell(x, y + 1, new Cell("│", color));
-        buffer.SetCell(x + w - 1, y + 1, new Cell("│", color));
-        buffer.SetCell(x, y + 2, new Cell("╰", color));
-        buffer.SetCell(x + w - 1, y + 2, new Cell("╯", color));
-        
-        for (int i = 1; i < w - 1; i++)
-        {
-            buffer.SetCell(x + i, y, new Cell("─", color));
-            buffer.SetCell(x + i, y + 2, new Cell("─", color));
-        }
-        
-        buffer.DrawText(text, x + 2, y + 1, color);
+        var w = text.Length + 2;
+        buffer.DrawText($"[{text}]", x, y, color);
     }
 }
