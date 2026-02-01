@@ -166,7 +166,7 @@ public class LogBufferTests
     }
 
     [Fact]
-    public void ThreadSafety_ConcurrentAdds()
+    public async Task ThreadSafety_ConcurrentAdds()
     {
         var buffer = new LogBuffer(1000);
         var tasks = Enumerable.Range(0, 10)
@@ -177,7 +177,7 @@ public class LogBufferTests
             }))
             .ToArray();
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         buffer.Count.Should().Be(1000);
     }
