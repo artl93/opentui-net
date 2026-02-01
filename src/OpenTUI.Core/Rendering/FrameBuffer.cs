@@ -11,10 +11,10 @@ public class FrameBuffer
 {
     private readonly Cell[,] _cells;
     private readonly bool[,] _dirty;
-    
+
     /// <summary>Width of the buffer in columns.</summary>
     public int Width { get; }
-    
+
     /// <summary>Height of the buffer in rows.</summary>
     public int Height { get; }
 
@@ -25,12 +25,12 @@ public class FrameBuffer
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(width);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(height);
-        
+
         Width = width;
         Height = height;
         _cells = new Cell[height, width];
         _dirty = new bool[height, width];
-        
+
         Clear();
     }
 
@@ -56,7 +56,7 @@ public class FrameBuffer
     {
         if (row < 0 || row >= Height || col < 0 || col >= Width)
             return;
-            
+
         if (_cells[row, col] != cell)
         {
             _cells[row, col] = cell;
@@ -73,11 +73,11 @@ public class FrameBuffer
             return;
 
         var existing = _cells[row, col];
-        
+
         // Blend foreground if semi-transparent
         if (cell.Foreground.A < 1f && cell.Foreground.A > 0f)
             cell.Foreground = cell.Foreground.BlendOver(existing.Foreground);
-            
+
         // Blend background if semi-transparent
         if (cell.Background.A < 1f)
             cell.Background = cell.Background.BlendOver(existing.Background);
@@ -95,7 +95,7 @@ public class FrameBuffer
 
         var fg = foreground ?? RGBA.White;
         var bg = background ?? RGBA.Transparent;
-        
+
         var currentCol = col;
         foreach (var c in text)
         {
@@ -115,7 +115,7 @@ public class FrameBuffer
     public void FillRect(int col, int row, int width, int height, RGBA color)
     {
         var cell = new Cell(" ", RGBA.White, color);
-        
+
         for (var r = row; r < row + height && r < Height; r++)
         {
             if (r < 0) continue;
@@ -250,7 +250,7 @@ public class FrameBuffer
         for (var r = 0; r < Height; r++)
         {
             sb.Append(Ansi.MoveCursor(r + 1, 1));
-            
+
             for (var c = 0; c < Width; c++)
             {
                 var cell = _cells[r, c];

@@ -10,7 +10,7 @@ public class SliderRenderableTests
     public void Constructor_Default_HasCorrectDefaults()
     {
         var slider = new SliderRenderable();
-        
+
         slider.Focusable.Should().BeTrue();
         slider.Value.Should().Be(0);
         slider.Min.Should().Be(0);
@@ -26,10 +26,10 @@ public class SliderRenderableTests
             Min = 0,
             Max = 100
         };
-        
+
         slider.Value = 150;
         slider.Value.Should().Be(100);
-        
+
         slider.Value = -50;
         slider.Value.Should().Be(0);
     }
@@ -43,10 +43,10 @@ public class SliderRenderableTests
             Max = 100,
             Step = 10
         };
-        
+
         slider.Value = 17;
         slider.Value.Should().Be(20);
-        
+
         slider.Value = 12;
         slider.Value.Should().Be(10);
     }
@@ -59,9 +59,9 @@ public class SliderRenderableTests
             Value = 50,
             Step = 5
         };
-        
+
         slider.Increment();
-        
+
         slider.Value.Should().Be(55);
     }
 
@@ -73,9 +73,9 @@ public class SliderRenderableTests
             Value = 50,
             Step = 5
         };
-        
+
         slider.Decrement();
-        
+
         slider.Value.Should().Be(45);
     }
 
@@ -88,9 +88,9 @@ public class SliderRenderableTests
             Max = 100,
             Value = 50
         };
-        
+
         slider.SetToMin();
-        
+
         slider.Value.Should().Be(10);
     }
 
@@ -103,9 +103,9 @@ public class SliderRenderableTests
             Max = 100,
             Value = 50
         };
-        
+
         slider.SetToMax();
-        
+
         slider.Value.Should().Be(100);
     }
 
@@ -118,7 +118,7 @@ public class SliderRenderableTests
             Max = 100,
             Value = 50
         };
-        
+
         slider.NormalizedValue.Should().BeApproximately(0.5f, 0.001f);
     }
 
@@ -131,7 +131,7 @@ public class SliderRenderableTests
             Max = 150,
             Value = 100
         };
-        
+
         slider.NormalizedValue.Should().BeApproximately(0.5f, 0.001f);
     }
 
@@ -141,9 +141,9 @@ public class SliderRenderableTests
         var slider = new SliderRenderable();
         float? changed = null;
         slider.ValueChanged += (_, v) => changed = v;
-        
+
         slider.Value = 42;
-        
+
         changed.Should().Be(42);
     }
 
@@ -153,9 +153,9 @@ public class SliderRenderableTests
         var slider = new SliderRenderable { Value = 50 };
         int callCount = 0;
         slider.ValueChanged += (_, _) => callCount++;
-        
+
         slider.Value = 50;
-        
+
         callCount.Should().Be(0);
     }
 
@@ -171,10 +171,10 @@ public class SliderRenderableTests
         slider.Layout.Width = 11;
         slider.Layout.Height = 1;
         slider.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(slider);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // At 50%, thumb should be roughly in the middle
         buffer.GetCell(0, 5).Character.Should().Be("●");
@@ -193,17 +193,17 @@ public class SliderRenderableTests
         slider.Layout.Width = 15;
         slider.Layout.Height = 1;
         slider.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(slider);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // Value "42" should appear after the track
         // Find "4" in the buffer
         bool found42 = false;
         for (int col = 0; col < 15; col++)
         {
-            if (buffer.GetCell(0, col).Character == "4" && 
+            if (buffer.GetCell(0, col).Character == "4" &&
                 col + 1 < 15 && buffer.GetCell(0, col + 1).Character == "2")
             {
                 found42 = true;

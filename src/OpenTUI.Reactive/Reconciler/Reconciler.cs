@@ -20,7 +20,7 @@ public class Reconciler
     public List<Patch> Reconcile(VNode newTree)
     {
         var patches = Differ.Diff(_currentTree, newTree, Array.Empty<int>());
-        
+
         ApplyPatches(patches);
         _currentTree = newTree;
 
@@ -94,7 +94,7 @@ public class Reconciler
 
         var parent = NavigateToParent(patch.Path);
         var index = patch.Path[^1];
-        
+
         if (parent != null && index < parent.Children.Count)
         {
             var child = parent.Children[index];
@@ -126,7 +126,7 @@ public class Reconciler
         {
             var oldChild = parent.Children[index];
             parent.Remove(oldChild);
-            
+
             var newRenderable = patch.Node.CreateRenderable();
             // IRenderable only has Add, so we add at end
             // For proper ordering, would need to use Renderable directly
@@ -137,14 +137,14 @@ public class Reconciler
     private void ApplyReorder(ReorderPatch patch)
     {
         // Reordering requires cast to Renderable which has Clear/Insert
-        var parent = patch.Path.Length == 0 
-            ? _rootRenderable 
+        var parent = patch.Path.Length == 0
+            ? _rootRenderable
             : NavigateTo(patch.Path);
 
         if (parent is not Renderable renderableParent) return;
 
         var children = parent.Children.ToList();
-        
+
         for (int i = 0; i < patch.OldIndices.Length; i++)
         {
             var oldIndex = patch.OldIndices[i];

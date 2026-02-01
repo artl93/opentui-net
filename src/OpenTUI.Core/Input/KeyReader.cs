@@ -36,15 +36,15 @@ public class KeyReader : IDisposable
     public async Task<KeyEvent?> ReadKeyAsync(int timeoutMs = -1, CancellationToken cancellationToken = default)
     {
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cts.Token);
-        
+
         try
         {
             var timeout = timeoutMs > 0 ? TimeSpan.FromMilliseconds(timeoutMs) : Timeout.InfiniteTimeSpan;
-            
+
             return await Task.Run<KeyEvent?>(async () =>
             {
                 var deadline = timeoutMs > 0 ? DateTime.UtcNow.Add(timeout) : DateTime.MaxValue;
-                
+
                 while (!linkedCts.Token.IsCancellationRequested)
                 {
                     if (SysConsole.KeyAvailable)
@@ -52,13 +52,13 @@ public class KeyReader : IDisposable
                         var keyInfo = SysConsole.ReadKey(true);
                         return AnsiKeyParser.FromConsoleKeyInfo(keyInfo);
                     }
-                    
+
                     if (DateTime.UtcNow >= deadline)
                         return null;
-                    
+
                     await Task.Delay(10, linkedCts.Token);
                 }
-                
+
                 return null;
             }, linkedCts.Token);
         }
@@ -106,7 +106,7 @@ public class KeyReader : IDisposable
     public IEnumerable<KeyEvent> ReadAvailableKeys()
     {
         var buffer = new List<char>();
-        
+
         while (SysConsole.KeyAvailable)
         {
             var keyInfo = SysConsole.ReadKey(true);
@@ -150,7 +150,7 @@ public class KeyReader : IDisposable
             return start + 1;
 
         var next = input[start + 1];
-        
+
         // Alt+key
         if (next != '[' && next != 'O')
             return start + 2;
@@ -167,7 +167,7 @@ public class KeyReader : IDisposable
             }
             end++;
         }
-        
+
         return end;
     }
 

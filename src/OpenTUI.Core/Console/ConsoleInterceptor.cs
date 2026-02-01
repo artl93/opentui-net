@@ -24,7 +24,7 @@ public class ConsoleInterceptor : TextWriter
     /// <summary>Whether to also write to the original output.</summary>
     public bool PassThrough { get; set; }
 
-    public ConsoleInterceptor(TextWriter original, LogBuffer buffer, 
+    public ConsoleInterceptor(TextWriter original, LogBuffer buffer,
         LogLevel defaultLevel = LogLevel.Info, string? source = null)
     {
         _original = original;
@@ -98,7 +98,7 @@ public class ConsoleInterceptor : TextWriter
         {
             var message = _lineBuffer.ToString();
             _lineBuffer.Clear();
-            
+
             // Try to detect log level from message prefix
             var (level, cleanMessage) = DetectLogLevel(message);
             _buffer.Add(cleanMessage, level, _source);
@@ -108,20 +108,20 @@ public class ConsoleInterceptor : TextWriter
     private (LogLevel, string) DetectLogLevel(string message)
     {
         var upper = message.TrimStart();
-        
+
         if (upper.StartsWith("[ERROR]", StringComparison.OrdinalIgnoreCase) ||
             upper.StartsWith("ERROR:", StringComparison.OrdinalIgnoreCase))
             return (LogLevel.Error, message);
-            
+
         if (upper.StartsWith("[WARN]", StringComparison.OrdinalIgnoreCase) ||
             upper.StartsWith("[WARNING]", StringComparison.OrdinalIgnoreCase) ||
             upper.StartsWith("WARNING:", StringComparison.OrdinalIgnoreCase))
             return (LogLevel.Warning, message);
-            
+
         if (upper.StartsWith("[DEBUG]", StringComparison.OrdinalIgnoreCase) ||
             upper.StartsWith("DEBUG:", StringComparison.OrdinalIgnoreCase))
             return (LogLevel.Debug, message);
-            
+
         if (upper.StartsWith("[INFO]", StringComparison.OrdinalIgnoreCase) ||
             upper.StartsWith("INFO:", StringComparison.OrdinalIgnoreCase))
             return (LogLevel.Info, message);

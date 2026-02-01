@@ -9,7 +9,7 @@ public class LogEntryTests
     public void Constructor_SetsProperties()
     {
         var entry = new LogEntry("Test message", LogLevel.Warning, "TestSource");
-        
+
         entry.Message.Should().Be("Test message");
         entry.Level.Should().Be(LogLevel.Warning);
         entry.Source.Should().Be("TestSource");
@@ -35,7 +35,7 @@ public class LogEntryTests
     {
         var entry = new LogEntry("Hello world", LogLevel.Error);
         var str = entry.ToString();
-        
+
         str.Should().Contain("[E]");
         str.Should().Contain("Hello world");
         str.Should().MatchRegex(@"\[\d{2}:\d{2}:\d{2}\.\d{3}\]");
@@ -46,7 +46,7 @@ public class LogEntryTests
     {
         var entry = new LogEntry("Test", LogLevel.Debug, "MySource");
         var str = entry.ToString();
-        
+
         str.Should().Contain("[D]");
         str.Should().Contain("[MySource]");
         str.Should().Contain("Test");

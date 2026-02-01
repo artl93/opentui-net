@@ -63,13 +63,13 @@ public class ProgressBar
     /// <summary>
     /// Creates a determinate progress bar.
     /// </summary>
-    public static ProgressBar Determinate(double progress = 0, int width = 20) => 
+    public static ProgressBar Determinate(double progress = 0, int width = 20) =>
         new(width) { Progress = progress };
 
     /// <summary>
     /// Creates an indeterminate progress bar.
     /// </summary>
-    public static ProgressBar Indeterminate(int width = 20) => 
+    public static ProgressBar Indeterminate(int width = 20) =>
         new(width) { Progress = -1 };
 
     /// <summary>
@@ -78,7 +78,7 @@ public class ProgressBar
     public void Update()
     {
         if (!IsIndeterminate) return;
-        
+
         var now = DateTime.Now;
         if (now - _lastUpdate >= _frameDelay)
         {

@@ -129,7 +129,7 @@ public class BoxRenderable : Renderable
         }
     }
 
-    private void DrawHorizontalLine(FrameBuffer buffer, int x, int y, int width, 
+    private void DrawHorizontalLine(FrameBuffer buffer, int x, int y, int width,
         string left, string horizontal, string right, RGBA fg, RGBA? bg)
     {
         SetBorderCell(buffer, x, y, left, fg, bg);
@@ -159,7 +159,7 @@ public class BoxRenderable : Renderable
     }
 
     private readonly record struct BorderChars(
-        string TopLeft, string TopRight, 
+        string TopLeft, string TopRight,
         string BottomLeft, string BottomRight,
         string Horizontal, string Vertical);
 }

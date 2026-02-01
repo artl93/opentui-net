@@ -11,7 +11,7 @@ public class SelectRenderableTests
     public void Constructor_Default_IsFocusable()
     {
         var select = new SelectRenderable();
-        
+
         select.Focusable.Should().BeTrue();
         select.Items.Should().BeEmpty();
         select.SelectedIndex.Should().Be(-1);
@@ -21,10 +21,10 @@ public class SelectRenderableTests
     public void AddItem_AddsToList()
     {
         var select = new SelectRenderable();
-        
+
         select.AddItem("Item 1");
         select.AddItem("Item 2");
-        
+
         select.Items.Should().HaveCount(2);
         select.SelectedIndex.Should().Be(0); // First item selected
     }
@@ -33,9 +33,9 @@ public class SelectRenderableTests
     public void AddItems_AddsMultiple()
     {
         var select = new SelectRenderable();
-        
+
         select.AddItems(["One", "Two", "Three"]);
-        
+
         select.Items.Should().HaveCount(3);
     }
 
@@ -44,9 +44,9 @@ public class SelectRenderableTests
     {
         var select = new SelectRenderable();
         select.AddItem("Old");
-        
+
         select.SetItems(["New 1", "New 2"]);
-        
+
         select.Items.Should().HaveCount(2);
         select.Items[0].Should().Be("New 1");
     }
@@ -56,9 +56,9 @@ public class SelectRenderableTests
     {
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
-        
+
         select.RemoveItem("B").Should().BeTrue();
-        
+
         select.Items.Should().HaveCount(2);
         select.Items.Should().NotContain("B");
     }
@@ -68,9 +68,9 @@ public class SelectRenderableTests
     {
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
-        
+
         select.ClearItems();
-        
+
         select.Items.Should().BeEmpty();
         select.SelectedIndex.Should().Be(-1);
     }
@@ -81,7 +81,7 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 1;
-        
+
         select.SelectedItem.Should().Be("B");
     }
 
@@ -91,9 +91,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 0;
-        
+
         select.SelectNext();
-        
+
         select.SelectedIndex.Should().Be(1);
     }
 
@@ -103,9 +103,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 2;
-        
+
         select.SelectNext();
-        
+
         select.SelectedIndex.Should().Be(2);
     }
 
@@ -115,9 +115,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 2;
-        
+
         select.SelectPrevious();
-        
+
         select.SelectedIndex.Should().Be(1);
     }
 
@@ -127,9 +127,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 0;
-        
+
         select.SelectPrevious();
-        
+
         select.SelectedIndex.Should().Be(0);
     }
 
@@ -139,9 +139,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 2;
-        
+
         select.SelectFirst();
-        
+
         select.SelectedIndex.Should().Be(0);
     }
 
@@ -151,9 +151,9 @@ public class SelectRenderableTests
         var select = new SelectRenderable();
         select.AddItems(["A", "B", "C"]);
         select.SelectedIndex = 0;
-        
+
         select.SelectLast();
-        
+
         select.SelectedIndex.Should().Be(2);
     }
 
@@ -164,9 +164,9 @@ public class SelectRenderableTests
         select.AddItems(["A", "B", "C"]);
         string? selected = null;
         select.SelectionChanged += (_, s) => selected = s;
-        
+
         select.SelectedIndex = 1;
-        
+
         selected.Should().Be("B");
     }
 
@@ -178,9 +178,9 @@ public class SelectRenderableTests
         select.SelectedIndex = 1;
         string? activated = null;
         select.ItemActivated += (_, s) => activated = s;
-        
+
         select.Activate();
-        
+
         activated.Should().Be("B");
     }
 
@@ -194,10 +194,10 @@ public class SelectRenderableTests
         select.Layout.Height = 5;
         select.Layout.AlignSelf = AlignSelf.FlexStart;
         select.Focus();
-        
+
         renderer.Root.Add(select);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // First item should have selection prefix
         buffer.GetCell(0, 0).Character.Should().Be("›");
@@ -216,10 +216,10 @@ public class SelectRenderableTests
         select.Layout.Width = 15;
         select.Layout.Height = 5;
         select.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(select);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("N");
     }

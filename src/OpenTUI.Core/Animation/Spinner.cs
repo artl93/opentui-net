@@ -7,33 +7,33 @@ public static class SpinnerStyles
 {
     /// <summary>Dots spinner: ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏</summary>
     public static readonly string[] Dots = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
-    
+
     /// <summary>Line spinner: -\|/</summary>
     public static readonly string[] Line = { "-", "\\", "|", "/" };
-    
+
     /// <summary>Arrow spinner: ←↖↑↗→↘↓↙</summary>
     public static readonly string[] Arrow = { "←", "↖", "↑", "↗", "→", "↘", "↓", "↙" };
-    
+
     /// <summary>Block spinner: ▖▘▝▗</summary>
     public static readonly string[] Block = { "▖", "▘", "▝", "▗" };
-    
+
     /// <summary>Circle spinner: ◐◓◑◒</summary>
     public static readonly string[] Circle = { "◐", "◓", "◑", "◒" };
-    
+
     /// <summary>Square corners: ◰◳◲◱</summary>
     public static readonly string[] Square = { "◰", "◳", "◲", "◱" };
-    
+
     /// <summary>Growing dots: .oO@*</summary>
     public static readonly string[] GrowingDots = { ".", "o", "O", "@", "*" };
-    
+
     /// <summary>Clock hands: 🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛</summary>
     public static readonly string[] Clock = { "🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛" };
-    
+
     /// <summary>Moon phases: 🌑🌒🌓🌔🌕🌖🌗🌘</summary>
     public static readonly string[] Moon = { "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘" };
-    
+
     /// <summary>Bouncing ball: [    ●    ]</summary>
-    public static readonly string[] BouncingBall = 
+    public static readonly string[] BouncingBall =
     {
         "[●         ]",
         "[ ●        ]",
@@ -68,7 +68,7 @@ public class Spinner
 
     /// <summary>Current frame character.</summary>
     public string CurrentFrame => _frames[_frameIndex];
-    
+
     /// <summary>Optional label displayed after the spinner.</summary>
     public string? Label { get; set; }
 
@@ -88,17 +88,17 @@ public class Spinner
     /// Creates a spinner with predefined dots style.
     /// </summary>
     public static Spinner Dots(string? label = null) => new(SpinnerStyles.Dots) { Label = label };
-    
+
     /// <summary>
     /// Creates a spinner with predefined line style.
     /// </summary>
     public static Spinner Line(string? label = null) => new(SpinnerStyles.Line) { Label = label };
-    
+
     /// <summary>
     /// Creates a spinner with predefined arrow style.
     /// </summary>
     public static Spinner Arrow(string? label = null) => new(SpinnerStyles.Arrow) { Label = label };
-    
+
     /// <summary>
     /// Creates a spinner with predefined bouncing ball style.
     /// </summary>
@@ -123,6 +123,6 @@ public class Spinner
     /// <summary>
     /// Gets the display string including label if set.
     /// </summary>
-    public override string ToString() => 
+    public override string ToString() =>
         string.IsNullOrEmpty(Label) ? CurrentFrame : $"{CurrentFrame} {Label}";
 }

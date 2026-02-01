@@ -9,7 +9,7 @@ public class TerminalCapabilitiesTests
     public void Detect_ReturnsNonNullCapabilities()
     {
         var caps = TerminalCapabilities.Detect();
-        
+
         caps.Should().NotBeNull();
     }
 
@@ -17,7 +17,7 @@ public class TerminalCapabilitiesTests
     public void Dumb_HasMinimalCapabilities()
     {
         var caps = TerminalCapabilities.Dumb;
-        
+
         caps.ColorSupport.Should().Be(ColorSupport.None);
         caps.SupportsUnicode.Should().BeFalse();
         caps.SupportsAlternateScreen.Should().BeFalse();
@@ -30,7 +30,7 @@ public class TerminalCapabilitiesTests
     public void Full_HasAllCapabilities()
     {
         var caps = TerminalCapabilities.Full;
-        
+
         caps.ColorSupport.Should().Be(ColorSupport.TrueColor);
         caps.SupportsUnicode.Should().BeTrue();
         caps.SupportsAlternateScreen.Should().BeTrue();
@@ -48,7 +48,7 @@ public class TerminalCapabilitiesTests
             SupportsAlternateScreen = false,
             IsCI = true
         };
-        
+
         caps.ColorSupport.Should().Be(ColorSupport.Palette256);
         caps.SupportsUnicode.Should().BeTrue();
         caps.SupportsAlternateScreen.Should().BeFalse();

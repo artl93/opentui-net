@@ -7,13 +7,13 @@ public struct LayoutRect
 {
     /// <summary>X position relative to parent.</summary>
     public float X { get; set; }
-    
+
     /// <summary>Y position relative to parent.</summary>
     public float Y { get; set; }
-    
+
     /// <summary>Computed width.</summary>
     public float Width { get; set; }
-    
+
     /// <summary>Computed height.</summary>
     public float Height { get; set; }
 
@@ -27,7 +27,7 @@ public struct LayoutRect
 
     /// <summary>Right edge (X + Width).</summary>
     public float Right => X + Width;
-    
+
     /// <summary>Bottom edge (Y + Height).</summary>
     public float Bottom => Y + Height;
 
@@ -50,105 +50,105 @@ public class FlexNode
     public string? Id { get; set; }
 
     // Layout style properties
-    
+
     /// <summary>Display type.</summary>
     public Display Display { get; set; } = Display.Flex;
-    
+
     /// <summary>Position type (relative or absolute).</summary>
     public PositionType PositionType { get; set; } = PositionType.Relative;
-    
+
     /// <summary>Flex direction.</summary>
     public FlexDirection FlexDirection { get; set; } = FlexDirection.Row;
-    
+
     /// <summary>Flex wrap behavior.</summary>
     public FlexWrap FlexWrap { get; set; } = FlexWrap.NoWrap;
-    
+
     /// <summary>Justify content (main axis).</summary>
     public JustifyContent JustifyContent { get; set; } = JustifyContent.FlexStart;
-    
+
     /// <summary>Align items (cross axis).</summary>
     public AlignItems AlignItems { get; set; } = AlignItems.Stretch;
-    
+
     /// <summary>Align self override.</summary>
     public AlignSelf AlignSelf { get; set; } = AlignSelf.Auto;
-    
+
     /// <summary>Align content (multi-line).</summary>
     public AlignContent AlignContent { get; set; } = AlignContent.FlexStart;
 
     // Flex item properties
-    
+
     /// <summary>Flex grow factor.</summary>
     public float FlexGrow { get; set; } = 0;
-    
+
     /// <summary>Flex shrink factor.</summary>
     public float FlexShrink { get; set; } = 1;
-    
+
     /// <summary>Flex basis.</summary>
     public FlexValue FlexBasis { get; set; } = FlexValue.Auto;
 
     // Size constraints
-    
+
     /// <summary>Width.</summary>
     public FlexValue Width { get; set; } = FlexValue.Auto;
-    
+
     /// <summary>Height.</summary>
     public FlexValue Height { get; set; } = FlexValue.Auto;
-    
+
     /// <summary>Minimum width.</summary>
     public FlexValue MinWidth { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Minimum height.</summary>
     public FlexValue MinHeight { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Maximum width.</summary>
     public FlexValue MaxWidth { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Maximum height.</summary>
     public FlexValue MaxHeight { get; set; } = FlexValue.Undefined;
 
     // Spacing
-    
+
     /// <summary>Margin around the node.</summary>
     public Edges Margin { get; set; } = Edges.Zero;
-    
+
     /// <summary>Padding inside the node.</summary>
     public Edges Padding { get; set; } = Edges.Zero;
-    
+
     /// <summary>Border width (affects padding calculation).</summary>
     public Edges Border { get; set; } = Edges.Zero;
 
     // Position offsets (for absolute positioning)
-    
+
     /// <summary>Top position offset.</summary>
     public FlexValue Top { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Right position offset.</summary>
     public FlexValue Right { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Bottom position offset.</summary>
     public FlexValue Bottom { get; set; } = FlexValue.Undefined;
-    
+
     /// <summary>Left position offset.</summary>
     public FlexValue Left { get; set; } = FlexValue.Undefined;
 
     // Gap (spacing between flex items)
-    
+
     /// <summary>Gap between items.</summary>
     public float Gap { get; set; } = 0;
-    
+
     /// <summary>Row gap (for wrapped flex).</summary>
     public float RowGap { get; set; } = 0;
-    
+
     /// <summary>Column gap.</summary>
     public float ColumnGap { get; set; } = 0;
 
     // Overflow
-    
+
     /// <summary>Overflow behavior.</summary>
     public Overflow Overflow { get; set; } = Overflow.Visible;
 
     // Computed layout
-    
+
     /// <summary>The computed layout rectangle.</summary>
     public LayoutRect Layout => _layout;
 

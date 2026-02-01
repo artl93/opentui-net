@@ -112,7 +112,7 @@ public class TextRenderable : Renderable
         {
             var line = lines[i];
             var lineX = GetAlignedX(line, x, width);
-            
+
             for (int j = 0; j < line.Length && lineX + j < x + width; j++)
             {
                 var cell = new Cell(

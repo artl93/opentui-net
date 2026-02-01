@@ -16,7 +16,7 @@ public readonly struct FlexValue : IEquatable<FlexValue>
 
     /// <summary>Auto sizing.</summary>
     public static FlexValue Auto => new(0, FlexUnit.Auto);
-    
+
     /// <summary>Undefined/unset value.</summary>
     public static FlexValue Undefined => new(float.NaN, FlexUnit.Undefined);
 

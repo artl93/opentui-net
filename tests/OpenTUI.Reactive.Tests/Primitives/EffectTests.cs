@@ -10,9 +10,9 @@ public class EffectTests
     {
         var executed = false;
         var effect = new Effect(() => executed = true);
-        
+
         effect.Run();
-        
+
         executed.Should().BeTrue();
     }
 
@@ -21,7 +21,7 @@ public class EffectTests
     {
         var executed = false;
         var effect = new Effect(() => executed = true).RunNow();
-        
+
         executed.Should().BeTrue();
         effect.Should().NotBeNull();
     }
@@ -33,10 +33,10 @@ public class EffectTests
         var runCount = 0;
         var effect = new Effect(() => runCount++)
             .DependsOn(state);
-        
+
         state.Set(1);
         state.Set(2);
-        
+
         runCount.Should().Be(2);
     }
 
@@ -45,15 +45,15 @@ public class EffectTests
     {
         var state = new State<int>(0);
         var log = new List<string>();
-        
+
         var effect = new Effect(
             () => log.Add("effect"),
             () => log.Add("cleanup")
         ).DependsOn(state);
-        
+
         effect.Run(); // First run
         state.Set(1); // Triggers cleanup + effect
-        
+
         log.Should().Equal("effect", "cleanup", "effect");
     }
 
@@ -65,9 +65,9 @@ public class EffectTests
             () => { },
             () => cleanedUp = true
         ).RunNow();
-        
+
         effect.Dispose();
-        
+
         cleanedUp.Should().BeTrue();
     }
 
@@ -78,11 +78,11 @@ public class EffectTests
         var runCount = 0;
         var effect = new Effect(() => runCount++)
             .DependsOn(state);
-        
+
         state.Set(1);
         effect.Dispose();
         state.Set(2);
-        
+
         runCount.Should().Be(1);
     }
 
@@ -91,7 +91,7 @@ public class EffectTests
     {
         var executed = false;
         Effects.Run(() => executed = true);
-        
+
         executed.Should().BeTrue();
     }
 
@@ -100,9 +100,9 @@ public class EffectTests
     {
         var executed = false;
         var effect = Effects.Create(() => executed = true);
-        
+
         executed.Should().BeFalse();
-        
+
         effect.Run();
         executed.Should().BeTrue();
     }
@@ -113,14 +113,14 @@ public class EffectTests
         var a = new State<int>(0);
         var b = new State<int>(0);
         var runCount = 0;
-        
+
         var effect = new Effect(() => runCount++)
             .DependsOn(a)
             .DependsOn(b);
-        
+
         a.Set(1);
         b.Set(1);
-        
+
         runCount.Should().Be(2);
     }
 
@@ -132,11 +132,11 @@ public class EffectTests
             () => { },
             () => cleanupCount++
         ).RunNow();
-        
+
         effect.Dispose();
         effect.Dispose();
         effect.Dispose();
-        
+
         cleanupCount.Should().Be(1);
     }
 
@@ -145,10 +145,10 @@ public class EffectTests
     {
         var runCount = 0;
         var effect = new Effect(() => runCount++);
-        
+
         effect.Dispose();
         effect.Run();
-        
+
         runCount.Should().Be(0);
     }
 }

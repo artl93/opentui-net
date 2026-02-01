@@ -58,6 +58,6 @@ public static class FC
 
     /// <summary>Creates a functional component with props.</summary>
     public static FunctionalComponent<TProps> Create<TProps>(
-        Func<TProps, IRenderable> render, 
+        Func<TProps, IRenderable> render,
         TProps initialProps) => new(render, initialProps);
 }

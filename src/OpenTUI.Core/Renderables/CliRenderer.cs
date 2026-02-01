@@ -14,19 +14,19 @@ public class CliRendererOptions
 {
     /// <summary>Target frames per second for the render loop.</summary>
     public int TargetFps { get; set; } = 60;
-    
+
     /// <summary>Whether to use the alternate screen buffer.</summary>
     public bool UseAlternateScreen { get; set; } = true;
-    
+
     /// <summary>Whether to hide the cursor.</summary>
     public bool HideCursor { get; set; } = true;
-    
+
     /// <summary>Whether to enable mouse input.</summary>
     public bool EnableMouse { get; set; } = true;
-    
+
     /// <summary>Default background color.</summary>
     public RGBA BackgroundColor { get; set; } = RGBA.Black;
-    
+
     /// <summary>Default foreground color.</summary>
     public RGBA ForegroundColor { get; set; } = RGBA.White;
 }
@@ -45,35 +45,35 @@ public class CliRenderer : IDisposable
     private bool _disposed;
     private IRenderable? _focusedElement;
     private readonly Stopwatch _frameTimer = new();
-    
+
     /// <summary>The root renderable container.</summary>
     public Renderable Root { get; }
-    
+
     /// <summary>Terminal capabilities.</summary>
     public TerminalCapabilities Capabilities => _terminal.Capabilities;
-    
+
     /// <summary>Current terminal size.</summary>
     public TerminalSize Size { get; private set; }
-    
+
     /// <summary>Current width.</summary>
     public int Width => Size.Width;
-    
+
     /// <summary>Current height.</summary>
     public int Height => Size.Height;
-    
+
     /// <summary>Whether the render loop is running.</summary>
     public bool IsRunning => _isRunning;
-    
+
     /// <summary>The currently focused element.</summary>
     public IRenderable? Focused => _focusedElement;
-    
+
     /// <summary>Target FPS.</summary>
     public int TargetFps
     {
         get => _options.TargetFps;
         set => _options.TargetFps = value;
     }
-    
+
     /// <summary>Default background color.</summary>
     public RGBA DefaultBackground
     {
@@ -84,16 +84,16 @@ public class CliRenderer : IDisposable
             Root.BackgroundColor = value;
         }
     }
-    
+
     /// <summary>Target frame time in milliseconds.</summary>
     public double TargetFrameTime => 1000.0 / _options.TargetFps;
 
     /// <summary>Event raised before each frame renders.</summary>
     public event EventHandler? BeforeRender;
-    
+
     /// <summary>Event raised after each frame renders.</summary>
     public event EventHandler? AfterRender;
-    
+
     /// <summary>Event raised when terminal is resized.</summary>
     public event EventHandler<TerminalSizeEventArgs>? Resized;
 
@@ -101,11 +101,11 @@ public class CliRenderer : IDisposable
     {
         _options = options;
         _terminal = new TerminalState(SysConsole.Out, capabilities);
-        
+
         Size = TerminalSize.GetCurrent();
         _buffer = new FrameBuffer(Size.Width, Size.Height);
         _backBuffer = new FrameBuffer(Size.Width, Size.Height);
-        
+
         Root = new GroupRenderable
         {
             Layout =
@@ -115,7 +115,7 @@ public class CliRenderer : IDisposable
             },
             BackgroundColor = options.BackgroundColor
         };
-        
+
         TerminalSize.SizeChanged += OnTerminalResized;
     }
 
@@ -155,10 +155,10 @@ public class CliRenderer : IDisposable
             _terminal.HideCursor();
         if (_options.EnableMouse)
             _terminal.EnableMouse();
-        
+
         _terminal.EnableBracketedPaste();
         _terminal.ClearScreen();
-        
+
         TerminalSize.StartMonitoring();
     }
 
@@ -169,13 +169,13 @@ public class CliRenderer : IDisposable
     {
         Setup();
         _isRunning = true;
-        
+
         while (_isRunning)
         {
             _frameTimer.Restart();
-            
+
             RenderFrame();
-            
+
             // Frame timing
             var elapsed = _frameTimer.Elapsed.TotalMilliseconds;
             var sleepTime = TargetFrameTime - elapsed;
@@ -200,30 +200,30 @@ public class CliRenderer : IDisposable
     public void RenderFrame()
     {
         BeforeRender?.Invoke(this, EventArgs.Empty);
-        
+
         // Calculate layout if dirty
         if (Root.Layout.IsDirty)
         {
             Root.Layout.CalculateLayout(Size.Width, Size.Height);
         }
-        
+
         // Clear back buffer
         _backBuffer.Clear(_options.BackgroundColor);
-        
+
         // Render tree to back buffer
         Root.Render(_backBuffer, 0, 0);
-        
+
         // Output to terminal (differential update)
         var output = GetDifferentialOutput();
         if (!string.IsNullOrEmpty(output))
         {
             _terminal.Write(output);
         }
-        
+
         // Swap buffers
         (_buffer, _backBuffer) = (_backBuffer, _buffer);
         _buffer.ClearDirty();
-        
+
         AfterRender?.Invoke(this, EventArgs.Empty);
     }
 
@@ -236,7 +236,7 @@ public class CliRenderer : IDisposable
         {
             Root.Layout.CalculateLayout(Size.Width, Size.Height);
         }
-        
+
         _buffer.Clear(_options.BackgroundColor);
         Root.Render(_buffer, 0, 0);
     }
@@ -252,7 +252,7 @@ public class CliRenderer : IDisposable
     public void SetFocused(IRenderable? element)
     {
         if (_focusedElement == element) return;
-        
+
         _focusedElement?.Blur();
         _focusedElement = element;
         _focusedElement?.Focus();
@@ -291,7 +291,7 @@ public class CliRenderer : IDisposable
     {
         var focusable = Root.GetFocusableDescendants().ToList();
         if (focusable.Count == 0) return;
-        
+
         var currentIndex = _focusedElement != null ? focusable.IndexOf(_focusedElement) : -1;
         var nextIndex = (currentIndex + 1) % focusable.Count;
         SetFocused(focusable[nextIndex]);
@@ -304,7 +304,7 @@ public class CliRenderer : IDisposable
     {
         var focusable = Root.GetFocusableDescendants().ToList();
         if (focusable.Count == 0) return;
-        
+
         var currentIndex = _focusedElement != null ? focusable.IndexOf(_focusedElement) : 0;
         var prevIndex = currentIndex <= 0 ? focusable.Count - 1 : currentIndex - 1;
         SetFocused(focusable[prevIndex]);
@@ -324,15 +324,15 @@ public class CliRenderer : IDisposable
             {
                 var newCell = _backBuffer.GetCell(r, c);
                 var oldCell = _buffer.GetCell(r, c);
-                
+
                 if (newCell == oldCell) continue;
-                
+
                 // Move cursor if needed
                 if (r != lastRow || c != lastCol + 1)
                 {
                     sb.Append(Ansi.MoveCursor(r + 1, c + 1));
                 }
-                
+
                 // Set style if changed
                 if (lastFg != newCell.Foreground || lastBg != newCell.Background || lastAttrs != newCell.Attributes)
                 {
@@ -341,46 +341,46 @@ public class CliRenderer : IDisposable
                     lastBg = newCell.Background;
                     lastAttrs = newCell.Attributes;
                 }
-                
+
                 sb.Append(newCell.Character);
                 lastRow = r;
                 lastCol = c;
             }
         }
-        
+
         if (sb.Length > 0)
         {
             sb.Append(Ansi.Reset);
         }
-        
+
         return sb.ToString();
     }
 
     private void OnTerminalResized(object? sender, TerminalSizeEventArgs e)
     {
         Size = e.Size;
-        
+
         // Resize buffers
         _buffer = new FrameBuffer(Size.Width, Size.Height);
         _backBuffer = new FrameBuffer(Size.Width, Size.Height);
-        
+
         // Update root size
         Root.Layout.Width = Size.Width;
         Root.Layout.Height = Size.Height;
         Root.MarkDirty();
-        
+
         Resized?.Invoke(this, e);
     }
 
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         Stop();
         TerminalSize.StopMonitoring();
         TerminalSize.SizeChanged -= OnTerminalResized;
         _terminal.Dispose();
-        
+
         _disposed = true;
     }
 }
