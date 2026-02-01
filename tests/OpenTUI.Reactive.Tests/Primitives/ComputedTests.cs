@@ -16,16 +16,16 @@ public class ComputedTests
     public void Value_IsCached()
     {
         var computeCount = 0;
-        var computed = new Computed<int>(() => 
+        var computed = new Computed<int>(() =>
         {
             computeCount++;
             return 42;
         });
-        
+
         _ = computed.Value;
         _ = computed.Value;
         _ = computed.Value;
-        
+
         computeCount.Should().Be(1);
     }
 
@@ -35,11 +35,11 @@ public class ComputedTests
         var state = new State<int>(10);
         var computed = new Computed<int>(() => state.Value * 2)
             .DependsOn(state);
-        
+
         computed.Value.Should().Be(20);
-        
+
         state.Set(15);
-        
+
         computed.Value.Should().Be(30);
     }
 
@@ -51,12 +51,12 @@ public class ComputedTests
         var computed = new Computed<int>(() => a.Value + b.Value)
             .DependsOn(a)
             .DependsOn(b);
-        
+
         computed.Value.Should().Be(5);
-        
+
         a.Set(10);
         computed.Value.Should().Be(13);
-        
+
         b.Set(20);
         computed.Value.Should().Be(30);
     }
@@ -67,12 +67,12 @@ public class ComputedTests
         var state = new State<int>(1);
         var computed = new Computed<int>(() => state.Value * 10)
             .DependsOn(state);
-        
+
         int? received = null;
         computed.Changed += (_, v) => received = v;
-        
+
         state.Set(5);
-        
+
         received.Should().Be(50);
     }
 
@@ -82,13 +82,13 @@ public class ComputedTests
         var state = new State<int>(1);
         var computed = new Computed<int>(() => state.Value)
             .DependsOn(state);
-        
+
         var values = new List<int>();
         computed.Subscribe(v => values.Add(v));
-        
+
         state.Set(2);
         state.Set(3);
-        
+
         values.Should().Equal(2, 3);
     }
 
@@ -98,14 +98,14 @@ public class ComputedTests
         var state = new State<int>(1);
         var computed = new Computed<int>(() => state.Value)
             .DependsOn(state);
-        
+
         var values = new List<int>();
         computed.Subscribe(v => values.Add(v));
-        
+
         state.Set(2);
         computed.Dispose();
         state.Set(3);
-        
+
         values.Should().Equal(2);
     }
 
@@ -139,9 +139,9 @@ public class ComputedTests
             .DependsOn(state);
         var quadrupled = new Computed<int>(() => doubled.Value * 2)
             .DependsOn(state); // Note: depends on state, not doubled
-        
+
         quadrupled.Value.Should().Be(20);
-        
+
         state.Set(10);
         doubled.Value.Should().Be(20);
         quadrupled.Value.Should().Be(40);

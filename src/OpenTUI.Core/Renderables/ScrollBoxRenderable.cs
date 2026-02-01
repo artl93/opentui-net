@@ -148,7 +148,7 @@ public class ScrollBoxRenderable : Renderable
         if (width <= 0 || height <= 0) return;
 
         var (contentWidth, contentHeight) = GetContentSize();
-        
+
         // Calculate viewport dimensions (accounting for scrollbars)
         var viewportWidth = _showVerticalScrollbar && contentHeight > height ? width - 1 : width;
         var viewportHeight = _showHorizontalScrollbar && contentWidth > viewportWidth ? height - 1 : height;

@@ -8,13 +8,13 @@ public readonly struct RGBA : IEquatable<RGBA>
 {
     /// <summary>Red component (0.0-1.0)</summary>
     public float R { get; }
-    
+
     /// <summary>Green component (0.0-1.0)</summary>
     public float G { get; }
-    
+
     /// <summary>Blue component (0.0-1.0)</summary>
     public float B { get; }
-    
+
     /// <summary>Alpha component (0.0-1.0), where 1.0 is fully opaque</summary>
     public float A { get; }
 
@@ -45,7 +45,7 @@ public readonly struct RGBA : IEquatable<RGBA>
     public static RGBA FromHex(string hex)
     {
         ArgumentNullException.ThrowIfNull(hex);
-        
+
         var span = hex.AsSpan();
         if (span.Length > 0 && span[0] == '#')
             span = span[1..];
@@ -86,9 +86,9 @@ public readonly struct RGBA : IEquatable<RGBA>
     public static RGBA Parse(string color)
     {
         ArgumentNullException.ThrowIfNull(color);
-        
+
         var trimmed = color.Trim().ToLowerInvariant();
-        
+
         if (trimmed == "transparent")
             return Transparent;
 

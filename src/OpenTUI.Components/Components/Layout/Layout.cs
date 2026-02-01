@@ -14,13 +14,13 @@ public class Row : Component
 {
     /// <summary>Gap between children in characters.</summary>
     public int Gap { get; set; } = 1;
-    
+
     /// <summary>Vertical alignment of children.</summary>
     public Alignment Align { get; set; } = Alignment.Start;
-    
+
     /// <summary>Horizontal distribution of children.</summary>
     public Justify Justify { get; set; } = Justify.Start;
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         // Row itself doesn't render, children are positioned by layout
@@ -39,13 +39,13 @@ public class Column : Component
 {
     /// <summary>Gap between children in rows.</summary>
     public int Gap { get; set; } = 0;
-    
+
     /// <summary>Horizontal alignment of children.</summary>
     public Alignment Align { get; set; } = Alignment.Stretch;
-    
+
     /// <summary>Vertical distribution of children.</summary>
     public Justify Justify { get; set; } = Justify.Start;
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         if (Style?.BackgroundColor != null)
@@ -62,22 +62,22 @@ public class Box : Component
 {
     /// <summary>Border style.</summary>
     public BorderStyle Border { get; set; } = BorderStyle.None;
-    
+
     /// <summary>Padding inside the box.</summary>
     public Spacing Padding { get; set; } = new Spacing(0);
-    
+
     /// <summary>Optional title shown in the border.</summary>
     public string? Title { get; set; }
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         var bg = Style?.BackgroundColor ?? GetColor(ColorToken.SurfaceBase);
         var borderColor = Style?.BorderColor ?? GetColor(ColorToken.BorderBase);
-        
+
         if (Border != BorderStyle.None)
         {
             DrawThemedBox(buffer, x, y, width, height, bg, borderColor, Border);
-            
+
             // Title
             if (!string.IsNullOrEmpty(Title) && width > Title.Length + 4)
             {
@@ -98,26 +98,26 @@ public class Card : Component
 {
     /// <summary>Optional card title.</summary>
     public string? Title { get; set; }
-    
+
     /// <summary>Optional card description.</summary>
     public string? Description { get; set; }
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         var bg = Style?.BackgroundColor ?? GetColor(ColorToken.SurfaceElevated);
         var borderColor = GetColor(ColorToken.BorderWeak);
-        
+
         DrawThemedBox(buffer, x, y, width, height, bg, borderColor, BorderStyle.Rounded);
-        
+
         var contentY = y + 1;
-        
+
         // Title
         if (!string.IsNullOrEmpty(Title))
         {
             buffer.DrawText(Title, x + 2, contentY, GetColor(ColorToken.TextStrong));
             contentY++;
         }
-        
+
         // Description
         if (!string.IsNullOrEmpty(Description))
         {
@@ -133,14 +133,14 @@ public class Separator : Component
 {
     /// <summary>Whether the separator is vertical.</summary>
     public bool Vertical { get; set; }
-    
+
     /// <summary>Separator character.</summary>
     public string Character { get; set; } = "─";
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         var color = Style?.Color ?? GetColor(ColorToken.BorderWeak);
-        
+
         if (Vertical)
         {
             var renderHeight = height > 0 ? height : 1;

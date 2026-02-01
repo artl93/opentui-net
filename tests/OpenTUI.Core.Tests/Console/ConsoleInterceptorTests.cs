@@ -11,9 +11,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("Hello World");
-        
+
         buffer.Count.Should().Be(1);
         buffer.GetEntries().First().Message.Should().Be("Hello World");
     }
@@ -24,10 +24,10 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("Line 1");
         interceptor.WriteLine("Line 2");
-        
+
         buffer.Count.Should().Be(2);
     }
 
@@ -37,11 +37,11 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.Write('H');
         interceptor.Write('i');
         buffer.Count.Should().Be(0);
-        
+
         interceptor.Write('\n');
         buffer.Count.Should().Be(1);
         buffer.GetEntries().First().Message.Should().Be("Hi");
@@ -53,9 +53,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.Write("Line1\nLine2\n");
-        
+
         buffer.Count.Should().Be(2);
     }
 
@@ -65,11 +65,11 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         // \r\n should be treated as just newline (CR stripped, LF causes flush)
         interceptor.WriteLine("Hello\r");
         interceptor.WriteLine("World");
-        
+
         buffer.Count.Should().Be(2);
         buffer.GetEntries().First().Message.Should().Be("Hello");
     }
@@ -80,9 +80,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer) { PassThrough = true };
-        
+
         interceptor.WriteLine("Test");
-        
+
         original.ToString().Should().Contain("Test");
     }
 
@@ -92,9 +92,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer) { PassThrough = false };
-        
+
         interceptor.WriteLine("Test");
-        
+
         original.ToString().Should().BeEmpty();
     }
 
@@ -104,9 +104,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("[ERROR] Something failed");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Error);
     }
 
@@ -116,9 +116,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("[WARNING] Watch out");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Warning);
     }
 
@@ -128,9 +128,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("[DEBUG] Trace info");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Debug);
     }
 
@@ -140,9 +140,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("[INFO] Just info");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Info);
     }
 
@@ -152,9 +152,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine("error: lowercase");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Error);
     }
 
@@ -164,9 +164,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer, LogLevel.Warning);
-        
+
         interceptor.WriteLine("No prefix here");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Warning);
     }
 
@@ -176,9 +176,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer, LogLevel.Info, "MyApp");
-        
+
         interceptor.WriteLine("Test");
-        
+
         buffer.GetEntries().First().Source.Should().Be("MyApp");
     }
 
@@ -188,10 +188,10 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.Write("Partial");
         buffer.Count.Should().Be(0);
-        
+
         interceptor.Flush();
         buffer.Count.Should().Be(1);
         buffer.GetEntries().First().Message.Should().Be("Partial");
@@ -202,12 +202,12 @@ public class ConsoleInterceptorTests
     {
         var buffer = new LogBuffer();
         using var original = new StringWriter();
-        
+
         using (var interceptor = new ConsoleInterceptor(original, buffer))
         {
             interceptor.Write("Not flushed yet");
         }
-        
+
         buffer.Count.Should().Be(1);
     }
 
@@ -217,7 +217,7 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.Original.Should().BeSameAs(original);
     }
 
@@ -227,7 +227,7 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.Buffer.Should().BeSameAs(buffer);
     }
 
@@ -237,9 +237,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         interceptor.WriteLine();
-        
+
         // Empty lines might be added or not - this tests current behavior
         buffer.Count.Should().Be(0);
     }
@@ -250,9 +250,9 @@ public class ConsoleInterceptorTests
         var buffer = new LogBuffer();
         using var original = new StringWriter();
         using var interceptor = new ConsoleInterceptor(original, buffer);
-        
+
         var act = () => interceptor.Write((string?)null);
-        
+
         act.Should().NotThrow();
     }
 }

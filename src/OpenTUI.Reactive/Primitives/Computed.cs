@@ -60,11 +60,11 @@ public class Computed<T> : IDisposable
     private void MarkDirty()
     {
         if (_isDirty) return;
-        
+
         _isDirty = true;
         var newValue = Value; // Recompute immediately
         Changed?.Invoke(this, newValue);
-        
+
         foreach (var subscriber in _subscribers.ToArray())
         {
             subscriber(newValue);
@@ -74,7 +74,7 @@ public class Computed<T> : IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         foreach (var sub in _subscriptions)
         {
             sub.Dispose();

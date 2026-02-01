@@ -131,7 +131,7 @@ public class ProgressBarTests
         var bar = new ProgressBar(10);
         bar.Progress = 1.5;
         bar.Progress.Should().Be(1.0);
-        
+
         bar.Progress = -0.5;
         bar.Progress.Should().Be(-0.5); // -1 is valid for indeterminate
     }
@@ -172,7 +172,7 @@ public class TextEffectsTests
     public void Typewriter_RevealsTextOverTime()
     {
         var text = "Hello World";
-        
+
         TextEffects.Typewriter(text, 0, 8).Should().BeEmpty();
         TextEffects.Typewriter(text, 0.5, 8).Should().Be("Hell");
         TextEffects.Typewriter(text, 10, 8).Should().Be(text);

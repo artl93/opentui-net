@@ -235,8 +235,8 @@ public class InputRenderable : Renderable
         }
 
         // Calculate visible portion
-        var visibleText = displayText.Length > _scrollOffset 
-            ? displayText[_scrollOffset..] 
+        var visibleText = displayText.Length > _scrollOffset
+            ? displayText[_scrollOffset..]
             : string.Empty;
         if (visibleText.Length > width)
             visibleText = visibleText[..width];

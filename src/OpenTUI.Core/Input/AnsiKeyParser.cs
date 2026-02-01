@@ -206,12 +206,12 @@ public static class AnsiKeyParser
         // Modifier encoding: 1 + (shift ? 1 : 0) + (alt ? 2 : 0) + (ctrl ? 4 : 0) + (meta ? 8 : 0)
         var modifiers = KeyModifiers.None;
         modNum -= 1; // Remove base 1
-        
+
         if ((modNum & 1) != 0) modifiers |= KeyModifiers.Shift;
         if ((modNum & 2) != 0) modifiers |= KeyModifiers.Alt;
         if ((modNum & 4) != 0) modifiers |= KeyModifiers.Control;
         if ((modNum & 8) != 0) modifiers |= KeyModifiers.Meta;
-        
+
         return modifiers;
     }
 

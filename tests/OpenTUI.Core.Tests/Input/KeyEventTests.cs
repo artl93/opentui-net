@@ -9,7 +9,7 @@ public class KeyEventTests
     public void FromChar_Letter_CreatesCorrectEvent()
     {
         var keyEvent = KeyEvent.FromChar('a');
-        
+
         keyEvent.Key.Should().Be(Key.A);
         keyEvent.Character.Should().Be('a');
         keyEvent.Modifiers.Should().Be(KeyModifiers.None);
@@ -19,7 +19,7 @@ public class KeyEventTests
     public void FromChar_UppercaseLetter_CreatesCorrectEvent()
     {
         var keyEvent = KeyEvent.FromChar('A');
-        
+
         keyEvent.Key.Should().Be(Key.A);
         keyEvent.Character.Should().Be('A');
     }
@@ -28,7 +28,7 @@ public class KeyEventTests
     public void FromChar_Number_CreatesCorrectEvent()
     {
         var keyEvent = KeyEvent.FromChar('5');
-        
+
         keyEvent.Key.Should().Be(Key.D5);
         keyEvent.Character.Should().Be('5');
     }
@@ -37,7 +37,7 @@ public class KeyEventTests
     public void FromChar_Space_CreatesSpaceEvent()
     {
         var keyEvent = KeyEvent.FromChar(' ');
-        
+
         keyEvent.Key.Should().Be(Key.Space);
         keyEvent.Character.Should().Be(' ');
     }
@@ -46,7 +46,7 @@ public class KeyEventTests
     public void FromChar_Tab_CreatesTabEvent()
     {
         var keyEvent = KeyEvent.FromChar('\t');
-        
+
         keyEvent.Key.Should().Be(Key.Tab);
     }
 
@@ -54,7 +54,7 @@ public class KeyEventTests
     public void FromChar_Enter_CreatesEnterEvent()
     {
         var keyEvent = KeyEvent.FromChar('\r');
-        
+
         keyEvent.Key.Should().Be(Key.Enter);
     }
 
@@ -62,7 +62,7 @@ public class KeyEventTests
     public void FromKey_WithModifiers_SetsModifiers()
     {
         var keyEvent = KeyEvent.FromKey(Key.A, KeyModifiers.Control | KeyModifiers.Shift);
-        
+
         keyEvent.Key.Should().Be(Key.A);
         keyEvent.Control.Should().BeTrue();
         keyEvent.Shift.Should().BeTrue();
@@ -73,7 +73,7 @@ public class KeyEventTests
     public void IsPrintable_Letter_ReturnsTrue()
     {
         var keyEvent = KeyEvent.FromChar('a');
-        
+
         keyEvent.IsPrintable.Should().BeTrue();
     }
 
@@ -81,7 +81,7 @@ public class KeyEventTests
     public void IsPrintable_ControlKey_ReturnsFalse()
     {
         var keyEvent = KeyEvent.FromKey(Key.Enter);
-        
+
         keyEvent.IsPrintable.Should().BeFalse();
     }
 
@@ -89,7 +89,7 @@ public class KeyEventTests
     public void ToString_SimpleKey_ReturnsKeyName()
     {
         var keyEvent = KeyEvent.FromKey(Key.Enter);
-        
+
         keyEvent.ToString().Should().Be("Enter");
     }
 
@@ -97,7 +97,7 @@ public class KeyEventTests
     public void ToString_WithModifiers_IncludesModifiers()
     {
         var keyEvent = KeyEvent.FromKey(Key.A, KeyModifiers.Control | KeyModifiers.Shift);
-        
+
         keyEvent.ToString().Should().Contain("Ctrl");
         keyEvent.ToString().Should().Contain("Shift");
     }
@@ -106,7 +106,7 @@ public class KeyEventTests
     public void ToString_PrintableChar_ShowsQuotedChar()
     {
         var keyEvent = KeyEvent.FromChar('x');
-        
+
         keyEvent.ToString().Should().Contain("'x'");
     }
 
@@ -122,7 +122,7 @@ public class KeyEventTests
     public void FromChar_VariousChars_MapsCorrectly(char c, Key expectedKey)
     {
         var keyEvent = KeyEvent.FromChar(c);
-        
+
         keyEvent.Key.Should().Be(expectedKey);
     }
 }

@@ -24,37 +24,37 @@ public class TextField : Component
     private string _value = "";
     private int _cursorPosition;
     private int _scrollOffset;
-    
+
     /// <summary>Label displayed above the input.</summary>
     public string? Label { get; set; }
-    
+
     /// <summary>Placeholder text when empty.</summary>
     public string? Placeholder { get; set; }
-    
+
     /// <summary>Description text below the input.</summary>
     public string? Description { get; set; }
-    
+
     /// <summary>Error message to display.</summary>
     public string? Error { get; set; }
-    
+
     /// <summary>Input variant.</summary>
     public TextFieldVariant Variant { get; set; } = TextFieldVariant.Normal;
-    
+
     /// <summary>Whether the field is read-only.</summary>
     public bool ReadOnly { get; set; }
-    
+
     /// <summary>Whether to show a copy button.</summary>
     public bool Copyable { get; set; }
-    
+
     /// <summary>Maximum input length.</summary>
     public int? MaxLength { get; set; }
-    
+
     /// <summary>Input width in characters.</summary>
     public int Width { get; set; } = 30;
-    
+
     /// <summary>Validation function returning error message or null if valid.</summary>
     public Func<string, string?>? Validation { get; set; }
-    
+
     /// <summary>Current input value.</summary>
     public string Value
     {
@@ -71,13 +71,13 @@ public class TextField : Component
             }
         }
     }
-    
+
     /// <summary>Change handler.</summary>
     public Action<string>? OnChange { get; set; }
-    
+
     /// <summary>Submit handler (Enter key).</summary>
     public Action<string>? OnSubmit { get; set; }
-    
+
     private void ValidateValue()
     {
         if (Validation != null)
@@ -85,14 +85,14 @@ public class TextField : Component
             Error = Validation(_value);
         }
     }
-    
+
     /// <summary>
     /// Handles a key press.
     /// </summary>
     public void HandleKey(ConsoleKeyInfo key)
     {
         if (Disabled || ReadOnly) return;
-        
+
         switch (key.Key)
         {
             case ConsoleKey.Backspace:
@@ -102,38 +102,38 @@ public class TextField : Component
                     _cursorPosition--;
                 }
                 break;
-                
+
             case ConsoleKey.Delete:
                 if (_cursorPosition < _value.Length)
                 {
                     Value = _value.Remove(_cursorPosition, 1);
                 }
                 break;
-                
+
             case ConsoleKey.LeftArrow:
                 if (_cursorPosition > 0) _cursorPosition--;
                 MarkDirty();
                 break;
-                
+
             case ConsoleKey.RightArrow:
                 if (_cursorPosition < _value.Length) _cursorPosition++;
                 MarkDirty();
                 break;
-                
+
             case ConsoleKey.Home:
                 _cursorPosition = 0;
                 MarkDirty();
                 break;
-                
+
             case ConsoleKey.End:
                 _cursorPosition = _value.Length;
                 MarkDirty();
                 break;
-                
+
             case ConsoleKey.Enter:
                 OnSubmit?.Invoke(_value);
                 break;
-                
+
             default:
                 if (!char.IsControl(key.KeyChar))
                 {
@@ -146,50 +146,50 @@ public class TextField : Component
                 break;
         }
     }
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         var currentY = y;
-        
+
         var hasError = !string.IsNullOrEmpty(Error);
-        var inputBg = Variant == TextFieldVariant.Ghost 
-            ? RGBA.Transparent 
+        var inputBg = Variant == TextFieldVariant.Ghost
+            ? RGBA.Transparent
             : GetColor(ColorToken.InputBase);
-        var borderColor = hasError 
-            ? GetColor(ColorToken.BorderCritical) 
-            : Focused 
-                ? GetColor(ColorToken.BorderSelected) 
+        var borderColor = hasError
+            ? GetColor(ColorToken.BorderCritical)
+            : Focused
+                ? GetColor(ColorToken.BorderSelected)
                 : GetColor(ColorToken.BorderBase);
-        
+
         // Label
         if (!string.IsNullOrEmpty(Label))
         {
             buffer.DrawText(Label, x, currentY, GetColor(ColorToken.TextWeak));
             currentY++;
         }
-        
+
         // Input box
         var inputWidth = Width + 2; // +2 for borders
         var inputHeight = 1;
-        
+
         if (Variant == TextFieldVariant.Normal)
         {
             // Background
             buffer.FillRect(x, currentY, inputWidth, inputHeight + 2, inputBg);
-            
+
             // Border
             DrawThemedBox(buffer, x, currentY, inputWidth, inputHeight + 2,
                 background: hasError ? GetColor(ColorToken.CriticalWeak) : inputBg,
                 borderColor: borderColor,
                 borderStyle: BorderStyle.Rounded);
-            
+
             currentY++; // Move inside border
         }
-        
+
         // Input content
         var contentX = x + 1;
         var displayWidth = Width;
-        
+
         // Adjust scroll offset to keep cursor visible
         if (_cursorPosition - _scrollOffset >= displayWidth)
         {
@@ -199,7 +199,7 @@ public class TextField : Component
         {
             _scrollOffset = _cursorPosition;
         }
-        
+
         // Display text or placeholder
         var displayText = string.IsNullOrEmpty(_value) && !Focused
             ? Placeholder ?? ""
@@ -207,15 +207,15 @@ public class TextField : Component
         var textColor = string.IsNullOrEmpty(_value) && !Focused
             ? GetColor(ColorToken.TextWeak)
             : GetColor(ColorToken.TextStrong);
-        
+
         if (Disabled) textColor = GetColor(ColorToken.TextDisabled);
-        
+
         var visibleText = displayText.Length > _scrollOffset
             ? displayText.Substring(_scrollOffset, Math.Min(displayWidth, displayText.Length - _scrollOffset))
             : "";
-        
+
         buffer.DrawText(visibleText.PadRight(displayWidth), contentX, currentY, textColor);
-        
+
         // Cursor
         if (Focused && !ReadOnly)
         {
@@ -226,27 +226,27 @@ public class TextField : Component
                 buffer.SetCell(cursorX, currentY, new Cell(cursorChar, inputBg, GetColor(ColorToken.TextStrong)));
             }
         }
-        
+
         // Copy button hint
         if (Copyable && !string.IsNullOrEmpty(_value))
         {
             buffer.DrawText("📋", x + inputWidth + 1, currentY, GetColor(ColorToken.IconWeak));
         }
-        
+
         currentY++;
-        
+
         if (Variant == TextFieldVariant.Normal)
         {
             currentY++; // Bottom border
         }
-        
+
         // Description
         if (!string.IsNullOrEmpty(Description) && string.IsNullOrEmpty(Error))
         {
             buffer.DrawText(Description, x, currentY, GetColor(ColorToken.TextWeak));
             currentY++;
         }
-        
+
         // Error message
         if (hasError)
         {

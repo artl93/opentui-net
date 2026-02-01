@@ -18,7 +18,7 @@ public class DifferTests
     {
         var node = VNodes.Element<TextRenderable>();
         var patches = Differ.Diff(null, node, Array.Empty<int>());
-        
+
         patches.Should().HaveCount(1);
         patches[0].Should().BeOfType<CreatePatch>();
     }
@@ -28,7 +28,7 @@ public class DifferTests
     {
         var node = VNodes.Element<TextRenderable>();
         var patches = Differ.Diff(node, null, Array.Empty<int>());
-        
+
         patches.Should().HaveCount(1);
         patches[0].Should().BeOfType<RemovePatch>();
     }
@@ -38,9 +38,9 @@ public class DifferTests
     {
         var oldNode = VNodes.Element<TextRenderable>();
         var newNode = VNodes.Element<TextRenderable>();
-        
+
         var patches = Differ.Diff(oldNode, newNode, Array.Empty<int>());
-        
+
         patches.Should().Contain(p => p is UpdatePatch);
     }
 
@@ -49,9 +49,9 @@ public class DifferTests
     {
         var oldNode = VNodes.Element<TextRenderable>();
         var newNode = VNodes.Element<BoxRenderable>();
-        
+
         var patches = Differ.Diff(oldNode, newNode, Array.Empty<int>());
-        
+
         patches.Should().HaveCount(1);
         patches[0].Should().BeOfType<ReplacePatch>();
     }
@@ -61,9 +61,9 @@ public class DifferTests
     {
         var oldNode = new ElementNode(typeof(TextRenderable), () => new TextRenderable(), null) { Key = "a" };
         var newNode = new ElementNode(typeof(TextRenderable), () => new TextRenderable(), null) { Key = "b" };
-        
+
         var patches = Differ.Diff(oldNode, newNode, Array.Empty<int>());
-        
+
         patches.Should().HaveCount(1);
         patches[0].Should().BeOfType<ReplacePatch>();
     }
@@ -80,9 +80,9 @@ public class DifferTests
             VNodes.Element<TextRenderable>(),
             VNodes.Element<TextRenderable>()
         );
-        
+
         var patches = Differ.Diff(oldNode, newNode, Array.Empty<int>());
-        
+
         // Should have update for parent + updates for existing children + create for new child
         patches.Should().Contain(p => p is CreatePatch);
     }
@@ -98,9 +98,9 @@ public class DifferTests
         var newNode = VNodes.Fragment(
             VNodes.Element<TextRenderable>()
         );
-        
+
         var patches = Differ.Diff(oldNode, newNode, Array.Empty<int>());
-        
+
         patches.Should().Contain(p => p is RemovePatch);
     }
 
@@ -109,9 +109,9 @@ public class DifferTests
     {
         var node = VNodes.Element<TextRenderable>();
         var path = new int[] { 1, 2, 3 };
-        
+
         var patches = Differ.Diff(null, node, path);
-        
+
         patches[0].Path.Should().Equal(1, 2, 3);
     }
 }

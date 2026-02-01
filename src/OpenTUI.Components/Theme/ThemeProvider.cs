@@ -7,7 +7,7 @@ namespace OpenTUI.Components.Theme;
 public static class ThemeProvider
 {
     private static readonly AsyncLocal<Theme> _currentTheme = new();
-    
+
     /// <summary>
     /// The current theme. Defaults to Dark if not set.
     /// </summary>
@@ -16,7 +16,7 @@ public static class ThemeProvider
         get => _currentTheme.Value ?? Theme.Dark;
         set => _currentTheme.Value = value;
     }
-    
+
     /// <summary>
     /// Sets the theme for the duration of the action.
     /// </summary>
@@ -33,7 +33,7 @@ public static class ThemeProvider
             _currentTheme.Value = previous;
         }
     }
-    
+
     /// <summary>
     /// Sets the theme for the duration of the async action.
     /// </summary>
@@ -50,7 +50,7 @@ public static class ThemeProvider
             _currentTheme.Value = previous;
         }
     }
-    
+
     /// <summary>
     /// Resets to the default dark theme.
     /// </summary>

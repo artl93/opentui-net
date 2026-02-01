@@ -17,7 +17,7 @@ public static class LightTheme
         [ColorToken.TextOnPrimary] = RGBA.FromHex("#ffffff"),
         [ColorToken.TextOnCritical] = RGBA.FromHex("#ffffff"),
         [ColorToken.TextOnSuccess] = RGBA.FromHex("#ffffff"),
-        
+
         // Surfaces
         [ColorToken.SurfaceBase] = RGBA.FromHex("#ffffff"),
         [ColorToken.SurfaceElevated] = RGBA.FromHex("#fafafa"),
@@ -26,7 +26,7 @@ public static class LightTheme
         [ColorToken.InputBase] = RGBA.FromHex("#ffffff"),
         [ColorToken.InputHover] = RGBA.FromHex("#f4f4f5"),
         [ColorToken.InputFocus] = RGBA.FromHex("#ffffff"),
-        
+
         // Borders
         [ColorToken.BorderStrong] = RGBA.FromHex("#71717a"),
         [ColorToken.BorderBase] = RGBA.FromHex("#d4d4d8"),
@@ -34,22 +34,22 @@ public static class LightTheme
         [ColorToken.BorderSelected] = RGBA.FromHex("#3b82f6"),
         [ColorToken.BorderCritical] = RGBA.FromHex("#ef4444"),
         [ColorToken.BorderSuccess] = RGBA.FromHex("#22c55e"),
-        
+
         // Primary (blue)
         [ColorToken.PrimaryBase] = RGBA.FromHex("#3b82f6"),
         [ColorToken.PrimaryHover] = RGBA.FromHex("#2563eb"),
         [ColorToken.PrimaryActive] = RGBA.FromHex("#1d4ed8"),
         [ColorToken.PrimaryWeak] = RGBA.FromHex("#dbeafe"),
-        
+
         // Secondary (gray)
         [ColorToken.SecondaryBase] = RGBA.FromHex("#e4e4e7"),
         [ColorToken.SecondaryHover] = RGBA.FromHex("#d4d4d8"),
         [ColorToken.SecondaryActive] = RGBA.FromHex("#a1a1aa"),
-        
+
         // Ghost
         [ColorToken.GhostHover] = RGBA.FromHex("#f4f4f5"),
         [ColorToken.GhostActive] = RGBA.FromHex("#e4e4e7"),
-        
+
         // Status
         [ColorToken.SuccessBase] = RGBA.FromHex("#22c55e"),
         [ColorToken.SuccessWeak] = RGBA.FromHex("#dcfce7"),
@@ -59,13 +59,13 @@ public static class LightTheme
         [ColorToken.CriticalWeak] = RGBA.FromHex("#fee2e2"),
         [ColorToken.InfoBase] = RGBA.FromHex("#3b82f6"),
         [ColorToken.InfoWeak] = RGBA.FromHex("#dbeafe"),
-        
+
         // Icons
         [ColorToken.IconStrong] = RGBA.FromHex("#09090b"),
         [ColorToken.IconBase] = RGBA.FromHex("#52525b"),
         [ColorToken.IconWeak] = RGBA.FromHex("#a1a1aa"),
         [ColorToken.IconDisabled] = RGBA.FromHex("#d4d4d8"),
-        
+
         // Accent
         [ColorToken.AccentBase] = RGBA.FromHex("#8b5cf6"),
         [ColorToken.AccentWeak] = RGBA.FromHex("#ede9fe"),

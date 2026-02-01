@@ -31,8 +31,8 @@ public class TabSelectRenderable : Renderable
     }
 
     /// <summary>Currently selected tab label.</summary>
-    public string? SelectedTab => _selectedIndex >= 0 && _selectedIndex < _tabs.Count 
-        ? _tabs[_selectedIndex] 
+    public string? SelectedTab => _selectedIndex >= 0 && _selectedIndex < _tabs.Count
+        ? _tabs[_selectedIndex]
         : null;
 
     /// <summary>Color for selected tab background.</summary>

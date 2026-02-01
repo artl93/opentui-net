@@ -12,10 +12,10 @@ public abstract class Renderable : IRenderable
     private readonly List<IRenderable> _children = new();
     private IRenderable? _parent;
     private bool _isFocused;
-    
+
     /// <summary>The layout node for this renderable.</summary>
     public FlexNode Layout { get; }
-    
+
     /// <summary>Unique identifier.</summary>
     public string? Id
     {
@@ -25,28 +25,28 @@ public abstract class Renderable : IRenderable
 
     /// <summary>Parent renderable.</summary>
     public IRenderable? Parent => _parent;
-    
+
     /// <summary>Child renderables.</summary>
     public IReadOnlyList<IRenderable> Children => _children;
-    
+
     /// <summary>Whether this renderable is visible.</summary>
     public bool Visible
     {
         get => Layout.Display != Display.None;
         set => Layout.Display = value ? Display.Flex : Display.None;
     }
-    
+
     /// <summary>Whether this renderable can receive focus.</summary>
     public bool Focusable { get; set; }
-    
+
     /// <summary>Whether this renderable currently has focus.</summary>
     public bool IsFocused => _isFocused;
 
     // Common style properties
-    
+
     /// <summary>Background color.</summary>
     public RGBA? BackgroundColor { get; set; }
-    
+
     /// <summary>Foreground (text) color.</summary>
     public RGBA? ForegroundColor { get; set; }
 
@@ -189,7 +189,7 @@ public abstract class Renderable : IRenderable
     public IRenderable? FindById(string id)
     {
         if (Id == id) return this;
-        
+
         foreach (var child in _children)
         {
             if (child.Id == id) return child;
@@ -199,7 +199,7 @@ public abstract class Renderable : IRenderable
                 if (found != null) return found;
             }
         }
-        
+
         return null;
     }
 
@@ -209,7 +209,7 @@ public abstract class Renderable : IRenderable
     public IEnumerable<IRenderable> GetFocusableDescendants()
     {
         if (Focusable) yield return this;
-        
+
         foreach (var child in _children)
         {
             if (child is Renderable r)

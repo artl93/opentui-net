@@ -12,7 +12,7 @@ public class ComponentTests
         public int RenderCount { get; private set; }
         public bool WasMounted { get; private set; }
         public bool WasUnmounted { get; private set; }
-        
+
         public State<int> Counter { get; private set; } = null!;
 
         protected override void OnMount()
@@ -38,7 +38,7 @@ public class ComponentTests
     {
         var component = new TestComponent();
         component.Mount();
-        
+
         component.WasMounted.Should().BeTrue();
         component.IsMounted.Should().BeTrue();
     }
@@ -49,7 +49,7 @@ public class ComponentTests
         var component = new TestComponent();
         component.Mount();
         component.Unmount();
-        
+
         component.WasUnmounted.Should().BeTrue();
         component.IsMounted.Should().BeFalse();
     }
@@ -59,9 +59,9 @@ public class ComponentTests
     {
         var component = new TestComponent();
         component.Mount();
-        
+
         var content = component.GetRenderedContent();
-        
+
         content.Should().NotBeNull();
         component.RenderCount.Should().Be(1);
     }
@@ -71,12 +71,12 @@ public class ComponentTests
     {
         var component = new TestComponent();
         component.Mount();
-        
+
         // ShouldRender returns true by default, so each call re-renders
         _ = component.GetRenderedContent();
         _ = component.GetRenderedContent();
         _ = component.GetRenderedContent();
-        
+
         // Default behavior re-renders each time (can be optimized in subclasses)
         component.RenderCount.Should().BeGreaterThan(0);
     }
@@ -86,11 +86,11 @@ public class ComponentTests
     {
         var component = new TestComponent();
         component.Mount();
-        
+
         _ = component.GetRenderedContent();
         component.ForceUpdate();
         _ = component.GetRenderedContent();
-        
+
         component.RenderCount.Should().Be(2);
     }
 
@@ -99,11 +99,11 @@ public class ComponentTests
     {
         var component = new TestComponent();
         component.Mount();
-        
+
         _ = component.GetRenderedContent();
         component.Counter.Set(1);
         _ = component.GetRenderedContent();
-        
+
         component.RenderCount.Should().Be(2);
     }
 
@@ -113,7 +113,7 @@ public class ComponentTests
         var component = new TestComponent();
         component.Mount();
         component.Dispose();
-        
+
         component.IsMounted.Should().BeFalse();
         component.WasUnmounted.Should().BeTrue();
     }
@@ -123,12 +123,12 @@ public class ComponentTests
     {
         var parent = new TestComponent();
         var child = new TestComponent();
-        
+
         // Using reflection to access protected method
         typeof(Component)
             .GetMethod("AddChild", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
             .Invoke(parent, new object[] { child });
-        
+
         child.Parent.Should().BeSameAs(parent);
     }
 
@@ -137,13 +137,13 @@ public class ComponentTests
     {
         var parent = new TestComponent();
         var child = new TestComponent();
-        
+
         typeof(Component)
             .GetMethod("AddChild", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
             .Invoke(parent, new object[] { child });
-        
+
         parent.Mount();
-        
+
         child.IsMounted.Should().BeTrue();
     }
 }

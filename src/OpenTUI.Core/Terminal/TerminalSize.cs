@@ -10,7 +10,7 @@ public class TerminalSize
 {
     /// <summary>Width in columns.</summary>
     public int Width { get; }
-    
+
     /// <summary>Height in rows.</summary>
     public int Height { get; }
 
@@ -41,7 +41,7 @@ public class TerminalSize
         // Fallback: try environment variables (commonly set by shells)
         var columns = Environment.GetEnvironmentVariable("COLUMNS");
         var lines = Environment.GetEnvironmentVariable("LINES");
-        
+
         if (int.TryParse(columns, out var width) && int.TryParse(lines, out var height))
         {
             return new TerminalSize(width, height);
@@ -65,7 +65,7 @@ public class TerminalSize
     public static void StartMonitoring(int pollIntervalMs = 100)
     {
         _lastSize = GetCurrent();
-        
+
         // On Unix, we could use SIGWINCH, but polling works cross-platform
         _pollTimer = new Timer(_ =>
         {
@@ -89,15 +89,15 @@ public class TerminalSize
 
     public override string ToString() => $"{Width}x{Height}";
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => obj is TerminalSize other && Width == other.Width && Height == other.Height;
 
     public override int GetHashCode() => HashCode.Combine(Width, Height);
 
-    public static bool operator ==(TerminalSize? left, TerminalSize? right) 
+    public static bool operator ==(TerminalSize? left, TerminalSize? right)
         => left?.Equals(right) ?? right is null;
 
-    public static bool operator !=(TerminalSize? left, TerminalSize? right) 
+    public static bool operator !=(TerminalSize? left, TerminalSize? right)
         => !(left == right);
 }
 
@@ -107,7 +107,7 @@ public class TerminalSize
 public class TerminalSizeEventArgs : EventArgs
 {
     public TerminalSize Size { get; }
-    
+
     public TerminalSizeEventArgs(TerminalSize size)
     {
         Size = size;

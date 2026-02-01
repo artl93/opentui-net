@@ -20,7 +20,7 @@ public enum ColorToken
     TextOnCritical,
     /// <summary>Text on success backgrounds</summary>
     TextOnSuccess,
-    
+
     // === Surfaces ===
     /// <summary>Default background</summary>
     SurfaceBase,
@@ -36,7 +36,7 @@ public enum ColorToken
     InputHover,
     /// <summary>Input field background when focused</summary>
     InputFocus,
-    
+
     // === Borders ===
     /// <summary>Emphasized borders</summary>
     BorderStrong,
@@ -50,7 +50,7 @@ public enum ColorToken
     BorderCritical,
     /// <summary>Success state borders</summary>
     BorderSuccess,
-    
+
     // === Primary (main action color) ===
     /// <summary>Primary action color</summary>
     PrimaryBase,
@@ -60,7 +60,7 @@ public enum ColorToken
     PrimaryActive,
     /// <summary>Primary weak/subtle variant</summary>
     PrimaryWeak,
-    
+
     // === Secondary ===
     /// <summary>Secondary action color</summary>
     SecondaryBase,
@@ -68,13 +68,13 @@ public enum ColorToken
     SecondaryHover,
     /// <summary>Secondary active state</summary>
     SecondaryActive,
-    
+
     // === Ghost (transparent) ===
     /// <summary>Ghost button hover background</summary>
     GhostHover,
     /// <summary>Ghost button active background</summary>
     GhostActive,
-    
+
     // === Status Colors ===
     /// <summary>Success/positive state</summary>
     SuccessBase,
@@ -92,7 +92,7 @@ public enum ColorToken
     InfoBase,
     /// <summary>Info weak/subtle</summary>
     InfoWeak,
-    
+
     // === Icons ===
     /// <summary>Emphasized icons</summary>
     IconStrong,
@@ -102,7 +102,7 @@ public enum ColorToken
     IconWeak,
     /// <summary>Disabled icons</summary>
     IconDisabled,
-    
+
     // === Accent (for highlights, selections) ===
     /// <summary>Accent color for selections</summary>
     AccentBase,

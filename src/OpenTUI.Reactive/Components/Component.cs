@@ -105,7 +105,7 @@ public abstract class Component : IDisposable
     {
         child.Parent = this;
         Children.Add(child);
-        
+
         if (_isMounted)
         {
             child.Mount();

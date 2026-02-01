@@ -24,10 +24,10 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Count.Should().Be(0);
-        
+
         buffer.Add("test");
         buffer.Count.Should().Be(1);
-        
+
         buffer.Add("test2");
         buffer.Count.Should().Be(2);
     }
@@ -38,9 +38,9 @@ public class LogBufferTests
         var buffer = new LogBuffer();
         LogEntry? received = null;
         buffer.EntryAdded += (s, e) => received = e;
-        
+
         buffer.Add("test message", LogLevel.Warning);
-        
+
         received.Should().NotBeNull();
         received!.Value.Message.Should().Be("test message");
         received.Value.Level.Should().Be(LogLevel.Warning);
@@ -50,12 +50,12 @@ public class LogBufferTests
     public void Add_RemovesOldEntriesWhenOverCapacity()
     {
         var buffer = new LogBuffer(3);
-        
+
         buffer.Add("first");
         buffer.Add("second");
         buffer.Add("third");
         buffer.Add("fourth");
-        
+
         buffer.Count.Should().Be(3);
         var entries = buffer.GetEntries().ToList();
         entries[0].Message.Should().Be("second");
@@ -67,7 +67,7 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Debug("debug msg", "src");
-        
+
         var entry = buffer.GetEntries().First();
         entry.Level.Should().Be(LogLevel.Debug);
         entry.Source.Should().Be("src");
@@ -78,7 +78,7 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Info("info msg");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Info);
     }
 
@@ -87,7 +87,7 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Warning("warn msg");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Warning);
     }
 
@@ -96,7 +96,7 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Error("error msg");
-        
+
         buffer.GetEntries().First().Level.Should().Be(LogLevel.Error);
     }
 
@@ -107,7 +107,7 @@ public class LogBufferTests
         buffer.Add("one");
         buffer.Add("two");
         buffer.Add("three");
-        
+
         var entries = buffer.GetEntries().ToList();
         entries.Should().HaveCount(3);
     }
@@ -120,7 +120,7 @@ public class LogBufferTests
         buffer.Info("info");
         buffer.Warning("warning");
         buffer.Error("error");
-        
+
         buffer.GetEntries(LogLevel.Debug).Should().HaveCount(4);
         buffer.GetEntries(LogLevel.Info).Should().HaveCount(3);
         buffer.GetEntries(LogLevel.Warning).Should().HaveCount(2);
@@ -133,7 +133,7 @@ public class LogBufferTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 10; i++)
             buffer.Add($"message {i}");
-        
+
         var recent = buffer.GetRecentEntries(3).ToList();
         recent.Should().HaveCount(3);
         recent[0].Message.Should().Be("message 7");
@@ -147,7 +147,7 @@ public class LogBufferTests
         buffer.Add("one");
         buffer.Add("two");
         buffer.Clear();
-        
+
         buffer.Count.Should().Be(0);
         buffer.GetEntries().Should().BeEmpty();
     }
@@ -157,11 +157,11 @@ public class LogBufferTests
     {
         var buffer = new LogBuffer();
         buffer.Add("test");
-        
+
         var raised = false;
         buffer.Cleared += (s, e) => raised = true;
         buffer.Clear();
-        
+
         raised.Should().BeTrue();
     }
 
@@ -176,9 +176,9 @@ public class LogBufferTests
                     buffer.Add($"Thread {i} message {j}");
             }))
             .ToArray();
-        
+
         Task.WaitAll(tasks);
-        
+
         buffer.Count.Should().Be(1000);
     }
 }

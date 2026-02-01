@@ -60,7 +60,7 @@ public class Effect : IDisposable
         if (_disposed) return;
 
         _cleanup?.Invoke();
-        
+
         foreach (var sub in _subscriptions)
         {
             sub.Dispose();
@@ -76,10 +76,10 @@ public class Effect : IDisposable
 public static class Effects
 {
     /// <summary>Creates an effect that runs the given action.</summary>
-    public static Effect Create(Action effect, Action? cleanup = null) 
+    public static Effect Create(Action effect, Action? cleanup = null)
         => new(effect, cleanup);
 
     /// <summary>Creates and immediately runs an effect.</summary>
-    public static Effect Run(Action effect, Action? cleanup = null) 
+    public static Effect Run(Action effect, Action? cleanup = null)
         => new Effect(effect, cleanup).RunNow();
 }

@@ -63,7 +63,7 @@ public class InputHandler : IDisposable
     private void DispatchKeyEvent(KeyEvent keyEvent)
     {
         var args = new KeyEventArgs(keyEvent);
-        
+
         // Raise global event first
         KeyDown?.Invoke(this, args);
         if (args.Handled)
@@ -252,7 +252,7 @@ public class KeyEventArgs : EventArgs
 {
     /// <summary>The key event.</summary>
     public KeyEvent KeyEvent { get; }
-    
+
     /// <summary>Whether the event has been handled.</summary>
     public bool Handled { get; set; }
 

@@ -9,7 +9,7 @@ public class TerminalSizeTests
     public void Constructor_SetsWidthAndHeight()
     {
         var size = new TerminalSize(80, 24);
-        
+
         size.Width.Should().Be(80);
         size.Height.Should().Be(24);
     }
@@ -18,7 +18,7 @@ public class TerminalSizeTests
     public void GetCurrent_ReturnsValidSize()
     {
         var size = TerminalSize.GetCurrent();
-        
+
         size.Width.Should().BeGreaterThan(0);
         size.Height.Should().BeGreaterThan(0);
     }
@@ -27,7 +27,7 @@ public class TerminalSizeTests
     public void ToString_ReturnsFormattedString()
     {
         var size = new TerminalSize(120, 40);
-        
+
         size.ToString().Should().Be("120x40");
     }
 
@@ -37,7 +37,7 @@ public class TerminalSizeTests
         var a = new TerminalSize(80, 24);
         var b = new TerminalSize(80, 24);
         var c = new TerminalSize(100, 30);
-        
+
         (a == b).Should().BeTrue();
         (a != c).Should().BeTrue();
         a.Equals(b).Should().BeTrue();
@@ -50,7 +50,7 @@ public class TerminalSizeTests
     {
         var size = new TerminalSize(80, 24);
         TerminalSize? nullSize = null;
-        
+
         (size == nullSize).Should().BeFalse();
         (nullSize == size).Should().BeFalse();
         (nullSize == null).Should().BeTrue();

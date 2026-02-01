@@ -18,13 +18,13 @@ public readonly record struct LogEntry
 {
     /// <summary>The log message.</summary>
     public string Message { get; init; }
-    
+
     /// <summary>The log level.</summary>
     public LogLevel Level { get; init; }
-    
+
     /// <summary>When the entry was created.</summary>
     public DateTime Timestamp { get; init; }
-    
+
     /// <summary>Optional source/category.</summary>
     public string? Source { get; init; }
 
@@ -40,7 +40,7 @@ public readonly record struct LogEntry
     {
         var time = Timestamp.ToString("HH:mm:ss.fff");
         var level = Level.ToString().ToUpper()[0];
-        return Source != null 
+        return Source != null
             ? $"[{time}] [{level}] [{Source}] {Message}"
             : $"[{time}] [{level}] {Message}";
     }

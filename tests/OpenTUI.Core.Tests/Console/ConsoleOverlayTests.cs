@@ -44,10 +44,10 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         buffer.Add("test");
         var overlay = new ConsoleOverlay(buffer);
-        
+
         overlay.ScrollOffset = -5;
         overlay.ScrollOffset.Should().BeGreaterThanOrEqualTo(0);
-        
+
         overlay.ScrollOffset = 1000;
         // Should be clamped to max
     }
@@ -80,11 +80,11 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 50; i++)
             buffer.Add($"Entry {i}");
-        
+
         var overlay = new ConsoleOverlay(buffer);
         overlay.ScrollOffset = 10;
         overlay.AutoScroll = true;
-        
+
         buffer.Add("New entry");
         overlay.ScrollOffset.Should().Be(0);
     }
@@ -109,14 +109,14 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 50; i++)
             buffer.Add($"Entry {i}");
-        
+
         var overlay = new ConsoleOverlay(buffer);
         // Layout is computed - set explicit size
         overlay.Layout.Width = FlexValue.Points(40);
         overlay.Layout.Height = FlexValue.Points(20);
         overlay.Layout.CalculateLayout(100, 100);
         overlay.ScrollOffset = 0;
-        
+
         overlay.ScrollUp(3);
         overlay.ScrollOffset.Should().Be(3);
     }
@@ -127,13 +127,13 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 50; i++)
             buffer.Add($"Entry {i}");
-        
+
         var overlay = new ConsoleOverlay(buffer);
         overlay.Layout.Width = FlexValue.Points(40);
         overlay.Layout.Height = FlexValue.Points(20);
         overlay.Layout.CalculateLayout(100, 100);
         overlay.ScrollOffset = 10;
-        
+
         overlay.ScrollDown(3);
         overlay.ScrollOffset.Should().Be(7);
     }
@@ -153,7 +153,7 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 50; i++)
             buffer.Add($"Entry {i}");
-        
+
         var overlay = new ConsoleOverlay(buffer);
         overlay.ScrollOffset = 20;
         overlay.ScrollToBottom();
@@ -165,16 +165,16 @@ public class ConsoleOverlayTests
     {
         var overlay = new ConsoleOverlay();
         overlay.MinLevel.Should().Be(LogLevel.Debug);
-        
+
         overlay.CycleLogLevel();
         overlay.MinLevel.Should().Be(LogLevel.Info);
-        
+
         overlay.CycleLogLevel();
         overlay.MinLevel.Should().Be(LogLevel.Warning);
-        
+
         overlay.CycleLogLevel();
         overlay.MinLevel.Should().Be(LogLevel.Error);
-        
+
         overlay.CycleLogLevel();
         overlay.MinLevel.Should().Be(LogLevel.Debug);
     }
@@ -185,9 +185,9 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         buffer.Add("test");
         var overlay = new ConsoleOverlay(buffer);
-        
+
         overlay.ClearLog();
-        
+
         buffer.Count.Should().Be(0);
     }
 
@@ -197,11 +197,11 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         for (int i = 0; i < 50; i++)
             buffer.Add($"Entry {i}");
-        
+
         var overlay = new ConsoleOverlay(buffer);
         overlay.ScrollOffset = 10;
         overlay.ClearLog();
-        
+
         overlay.ScrollOffset.Should().Be(0);
     }
 
@@ -213,10 +213,10 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(40);
         overlay.Layout.Height = FlexValue.Points(10);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         overlay.Render(fb, 0, 0);
-        
+
         // Visible=false means no border should be drawn
         // Default FrameBuffer character is " " (space)
         // GetCell takes (row, col)
@@ -235,10 +235,10 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(40);
         overlay.Layout.Height = FlexValue.Points(10);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         overlay.Render(fb, 0, 0);
-        
+
         // Check top-left corner - GetCell takes (row, col)
         fb.GetCell(0, 0).Character.Should().Be("┌");
     }
@@ -255,10 +255,10 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(40);
         overlay.Layout.Height = FlexValue.Points(10);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         overlay.Render(fb, 0, 0);
-        
+
         // Title is drawn at position 2 with leading space: " Test "
         // GetCell takes (row, col), so check row 0
         // Position 0: ┌, Position 1: ─, Position 2: " ", Position 3: "T"
@@ -275,10 +275,10 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(60);
         overlay.Layout.Height = FlexValue.Points(10);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         overlay.Render(fb, 0, 0);
-        
+
         // The 'H' of "Hello" should be somewhere in the rendered output
         buffer.GetEntries().First().Message.Should().Contain("Hello");
     }
@@ -291,7 +291,7 @@ public class ConsoleOverlayTests
         buffer.Error("Error message");
         var overlay = new ConsoleOverlay(buffer);
         overlay.MinLevel = LogLevel.Error;
-        
+
         // Only error should be visible when min level is Error
         var visibleEntries = buffer.GetEntries(LogLevel.Error).ToList();
         visibleEntries.Should().HaveCount(1);
@@ -311,7 +311,7 @@ public class ConsoleOverlayTests
         var buffer = new LogBuffer();
         var overlay = new ConsoleOverlay(buffer);
         overlay.Dispose();
-        
+
         // Adding entries after dispose should not cause issues
         var act = () => buffer.Add("test");
         act.Should().NotThrow();
@@ -341,7 +341,7 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(0);
         overlay.Layout.Height = FlexValue.Points(0);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         var act = () => overlay.Render(fb, 0, 0);
         act.Should().NotThrow();
@@ -354,7 +354,7 @@ public class ConsoleOverlayTests
         overlay.Layout.Width = FlexValue.Points(2);
         overlay.Layout.Height = FlexValue.Points(2);
         overlay.Layout.CalculateLayout(80, 24);
-        
+
         var fb = new FrameBuffer(80, 24);
         var act = () => overlay.Render(fb, 0, 0);
         act.Should().NotThrow();

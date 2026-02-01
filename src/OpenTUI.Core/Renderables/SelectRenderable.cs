@@ -34,8 +34,8 @@ public class SelectRenderable : Renderable
     }
 
     /// <summary>Currently selected item (null if no selection).</summary>
-    public string? SelectedItem => _selectedIndex >= 0 && _selectedIndex < _items.Count 
-        ? _items[_selectedIndex] 
+    public string? SelectedItem => _selectedIndex >= 0 && _selectedIndex < _items.Count
+        ? _items[_selectedIndex]
         : null;
 
     /// <summary>Text to display when the list is empty.</summary>
