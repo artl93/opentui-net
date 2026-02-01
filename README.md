@@ -17,11 +17,9 @@ A pure C# terminal UI library with flexbox layout, inspired by [OpenTUI](https:/
 - **Input Handling** - Keyboard events with modifier key support
 - **Console Overlay** - Capture and display Console.WriteLine output
 
-## Installation
+## Installation - 
 
-```bash
-dotnet add package OpenTUI.NET
-```
+Not available right now as this is an experoment - clone the repo
 
 > **Note**: Requires .NET 10.0 or later
 
