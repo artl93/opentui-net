@@ -65,20 +65,6 @@ public class Checkbox : Component
             : GetColor(ColorToken.TextBase);
 
         // Draw checkbox box
-        string box;
-        if (Indeterminate)
-        {
-            box = "[─]";
-        }
-        else if (Checked)
-        {
-            box = "[✓]";
-        }
-        else
-        {
-            box = "[ ]";
-        }
-
         // Box brackets
         buffer.DrawText("[", x, y, boxColor);
         buffer.DrawText("]", x + 2, y, boxColor);

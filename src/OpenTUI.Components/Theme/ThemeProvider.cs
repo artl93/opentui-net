@@ -30,7 +30,7 @@ public static class ThemeProvider
         }
         finally
         {
-            _currentTheme.Value = previous;
+            _currentTheme.Value = previous!;
         }
     }
 
@@ -47,7 +47,7 @@ public static class ThemeProvider
         }
         finally
         {
-            _currentTheme.Value = previous;
+            _currentTheme.Value = previous!;
         }
     }
 

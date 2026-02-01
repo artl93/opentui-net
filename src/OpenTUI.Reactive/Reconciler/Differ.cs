@@ -133,7 +133,7 @@ public static class Differ
 
         foreach (var (key, newIndex) in newKeys)
         {
-            if (oldKeys.TryGetValue(key, out var oldIndex) && oldIndex != newIndex)
+            if (oldKeys.TryGetValue(key!, out var oldIndex) && oldIndex != newIndex)
             {
                 oldIndices.Add(oldIndex);
                 newIndices.Add(newIndex);
