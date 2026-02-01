@@ -5,6 +5,8 @@ A pure C# terminal UI library with flexbox layout, inspired by [OpenTUI](https:/
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+![OpenTUI-Net Demos](https://github.com/user-attachments/assets/e10fed14-a95d-4011-a580-28da96c9e27f)
+
 ## Features
 
 - **Pure C# Flexbox Layout** - No native dependencies, cross-platform
