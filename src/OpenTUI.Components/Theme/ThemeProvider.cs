@@ -30,6 +30,7 @@ public static class ThemeProvider
         }
         finally
         {
+            // Restore previous theme (null is valid when no theme was previously set)
             _currentTheme.Value = previous!;
         }
     }
@@ -47,6 +48,7 @@ public static class ThemeProvider
         }
         finally
         {
+            // Restore previous theme (null is valid when no theme was previously set)
             _currentTheme.Value = previous!;
         }
     }
