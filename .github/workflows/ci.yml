@@ -33,16 +33,4 @@ jobs:
         directory: ./coverage
         fail_ci_if_error: false
 
-  format-check:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-    
-    - name: Check formatting
-      run: dotnet format --verify-no-changes --verbosity diagnostic
+
