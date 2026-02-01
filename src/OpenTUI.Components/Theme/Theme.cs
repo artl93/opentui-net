@@ -8,10 +8,10 @@ namespace OpenTUI.Components.Theme;
 public class Theme
 {
     private readonly Dictionary<ColorToken, RGBA> _colors;
-    
+
     /// <summary>Theme name for identification.</summary>
     public string Name { get; }
-    
+
     /// <summary>Whether this is a dark theme.</summary>
     public bool IsDark { get; }
 
@@ -28,8 +28,8 @@ public class Theme
     /// <summary>
     /// Gets the color for a specific token.
     /// </summary>
-    public RGBA this[ColorToken token] => _colors.TryGetValue(token, out var color) 
-        ? color 
+    public RGBA this[ColorToken token] => _colors.TryGetValue(token, out var color)
+        ? color
         : IsDark ? RGBA.White : RGBA.Black;
 
     /// <summary>
@@ -59,7 +59,7 @@ public class Theme
     /// The default dark theme.
     /// </summary>
     public static Theme Dark => DarkTheme.Instance;
-    
+
     /// <summary>
     /// The default light theme.
     /// </summary>

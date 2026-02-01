@@ -25,28 +25,28 @@ public class Button : Component
 {
     private bool _isPressed;
     private bool _isHovered;
-    
+
     /// <summary>Button label text.</summary>
     public string Label { get; set; } = "";
-    
+
     /// <summary>Button variant (Primary, Secondary, Ghost, Danger).</summary>
     public ButtonVariant Variant { get; set; } = ButtonVariant.Secondary;
-    
+
     /// <summary>Button size.</summary>
     public ComponentSize Size { get; set; } = ComponentSize.Medium;
-    
+
     /// <summary>Optional icon (Unicode character) shown before label.</summary>
     public string? Icon { get; set; }
-    
+
     /// <summary>Whether the button is in loading state.</summary>
     public bool Loading { get; set; }
-    
+
     /// <summary>Keyboard shortcut hint (e.g., "Ctrl+S").</summary>
     public string? Shortcut { get; set; }
-    
+
     /// <summary>Click handler.</summary>
     public Action? OnClick { get; set; }
-    
+
     /// <summary>
     /// Triggers the button click.
     /// </summary>
@@ -57,29 +57,29 @@ public class Button : Component
             OnClick?.Invoke();
         }
     }
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
         var (bg, fg, border) = GetColors();
         var (paddingX, paddingY, renderHeight) = GetSizing();
-        
+
         // Calculate content
         var iconPart = Icon != null ? $"{Icon} " : "";
         var loadingPart = Loading ? "◐ " : "";
         var content = $"{loadingPart}{iconPart}{Label}";
         var shortcutPart = Shortcut != null ? $" [{Shortcut}]" : "";
         var fullContent = content + shortcutPart;
-        
+
         var buttonWidth = fullContent.Length + (paddingX * 2);
-        
+
         // Background
         buffer.FillRect(x, y, buttonWidth, renderHeight, bg);
-        
+
         // Border for secondary variant
         if (Variant == ButtonVariant.Secondary && border.A > 0)
         {
-            DrawThemedBox(buffer, x, y, buttonWidth, renderHeight, 
-                background: null, 
+            DrawThemedBox(buffer, x, y, buttonWidth, renderHeight,
+                background: null,
                 borderColor: Focused ? GetColor(ColorToken.BorderSelected) : border,
                 borderStyle: BorderStyle.Rounded);
         }
@@ -88,22 +88,22 @@ public class Button : Component
             // Rounded corners hint (just color the background appropriately)
             buffer.FillRect(x, y, buttonWidth, renderHeight, bg);
         }
-        
+
         // Text
         var textX = x + paddingX;
         var textY = y + (renderHeight - 1) / 2;
-        
+
         // Content
         buffer.DrawText(content, textX, textY, fg);
-        
+
         // Shortcut hint (dimmed)
         if (Shortcut != null)
         {
             var shortcutColor = fg.WithAlpha(0.5f);
-            buffer.DrawText(shortcutPart, textX + content.Length, textY, 
+            buffer.DrawText(shortcutPart, textX + content.Length, textY,
                 Variant == ButtonVariant.Ghost ? GetColor(ColorToken.TextWeak) : shortcutColor);
         }
-        
+
         // Focus indicator
         if (Focused)
         {
@@ -111,7 +111,7 @@ public class Button : Component
             buffer.SetCell(x - 1, textY, new Cell("▶", focusColor));
         }
     }
-    
+
     private (RGBA bg, RGBA fg, RGBA border) GetColors()
     {
         if (Disabled)
@@ -122,7 +122,7 @@ public class Button : Component
                 GetColor(ColorToken.BorderWeak)
             );
         }
-        
+
         return Variant switch
         {
             ButtonVariant.Primary => (
@@ -156,7 +156,7 @@ public class Button : Component
             _ => (GetColor(ColorToken.SurfaceElevated), GetColor(ColorToken.TextBase), GetColor(ColorToken.BorderBase))
         };
     }
-    
+
     private (int paddingX, int paddingY, int height) GetSizing()
     {
         return Size switch

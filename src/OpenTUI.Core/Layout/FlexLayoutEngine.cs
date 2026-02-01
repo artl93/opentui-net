@@ -31,7 +31,7 @@ public static class FlexLayoutEngine
         // Account for padding and border
         var paddingH = node.Padding.GetHorizontal(width) + node.Border.GetHorizontal(width);
         var paddingV = node.Padding.GetVertical(height) + node.Border.GetVertical(height);
-        
+
         var contentWidth = width - paddingH;
         var contentHeight = height - paddingV;
 
@@ -82,7 +82,7 @@ public static class FlexLayoutEngine
             FlexBasis = CalculateFlexBasis(child, mainSize, isRow),
             FlexGrow = child.FlexGrow,
             FlexShrink = child.FlexShrink,
-            MainMargin = isRow 
+            MainMargin = isRow
                 ? child.Margin.Left.ResolveOrDefault(contentWidth, 0) + child.Margin.Right.ResolveOrDefault(contentWidth, 0)
                 : child.Margin.Top.ResolveOrDefault(contentHeight, 0) + child.Margin.Bottom.ResolveOrDefault(contentHeight, 0),
             CrossMargin = isRow
@@ -140,8 +140,8 @@ public static class FlexLayoutEngine
         // Calculate cross sizes
         foreach (var info in childInfos)
         {
-            var alignSelf = info.Node.AlignSelf == AlignSelf.Auto 
-                ? (AlignSelf)parent.AlignItems 
+            var alignSelf = info.Node.AlignSelf == AlignSelf.Auto
+                ? (AlignSelf)parent.AlignItems
                 : info.Node.AlignSelf;
 
             if (alignSelf == AlignSelf.Stretch)
@@ -170,7 +170,7 @@ public static class FlexLayoutEngine
         var currentMain = mainOffset;
         foreach (var info in orderedChildren)
         {
-            var marginStart = isRow 
+            var marginStart = isRow
                 ? info.Node.Margin.Left.ResolveOrDefault(contentWidth, 0)
                 : info.Node.Margin.Top.ResolveOrDefault(contentHeight, 0);
             var crossMarginStart = isRow
@@ -180,8 +180,8 @@ public static class FlexLayoutEngine
             currentMain += marginStart;
 
             // Calculate cross offset based on alignment
-            var alignSelf = info.Node.AlignSelf == AlignSelf.Auto 
-                ? (AlignSelf)parent.AlignItems 
+            var alignSelf = info.Node.AlignSelf == AlignSelf.Auto
+                ? (AlignSelf)parent.AlignItems
                 : info.Node.AlignSelf;
             var crossOffset = CalculateCrossOffset(alignSelf, crossSize, info.CrossSize + info.CrossMargin) + crossMarginStart;
 
@@ -251,7 +251,7 @@ public static class FlexLayoutEngine
     private static float ResolveSize(FlexValue size, float parentSize, FlexValue minSize, FlexValue maxSize, float defaultSize)
     {
         float result;
-        
+
         if (size.IsDefined && !size.IsAuto)
         {
             result = size.Resolve(parentSize);
@@ -327,8 +327,8 @@ public static class FlexLayoutEngine
         else
         {
             // Sum of children heights
-            return children.Sum(c => c.Layout.Height + 
-                c.Margin.Top.ResolveOrDefault(0, 0) + 
+            return children.Sum(c => c.Layout.Height +
+                c.Margin.Top.ResolveOrDefault(0, 0) +
                 c.Margin.Bottom.ResolveOrDefault(0, 0)) +
                 parent.GetMainGap() * Math.Max(0, children.Count - 1);
         }

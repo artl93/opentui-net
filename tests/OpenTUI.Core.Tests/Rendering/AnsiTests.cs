@@ -46,7 +46,7 @@ public class AnsiTests
     public void SetForeground_GeneratesTrueColorSequence()
     {
         var color = RGBA.FromInts(255, 128, 64);
-        
+
         Ansi.SetForeground(color).Should().Be("\x1b[38;2;255;128;64m");
     }
 
@@ -54,7 +54,7 @@ public class AnsiTests
     public void SetBackground_GeneratesTrueColorSequence()
     {
         var color = RGBA.FromInts(64, 128, 255);
-        
+
         Ansi.SetBackground(color).Should().Be("\x1b[48;2;64;128;255m");
     }
 
@@ -72,7 +72,7 @@ public class AnsiTests
     {
         var attrs = TextAttributes.Bold | TextAttributes.Underline;
         var result = Ansi.SetAttributes(attrs);
-        
+
         result.Should().Contain("1m");
         result.Should().Contain("4m");
     }
@@ -83,9 +83,9 @@ public class AnsiTests
         var fg = RGBA.Red;
         var bg = RGBA.Blue;
         var attrs = TextAttributes.Bold;
-        
+
         var result = Ansi.SetStyle(fg, bg, attrs);
-        
+
         result.Should().Contain(Ansi.Reset);
         result.Should().Contain("38;2;255;0;0m"); // Red foreground
         result.Should().Contain("48;2;0;0;255m"); // Blue background
@@ -102,7 +102,7 @@ public class AnsiTests
     public void StripAnsi_RemovesEscapeSequences()
     {
         var styled = "\x1b[38;2;255;0;0mHello\x1b[0m World\x1b[1m!\x1b[0m";
-        
+
         Ansi.StripAnsi(styled).Should().Be("Hello World!");
     }
 
@@ -123,7 +123,7 @@ public class AnsiTests
     public void GetDisplayWidth_IgnoresAnsiSequences()
     {
         var styled = "\x1b[1mBold\x1b[0m";
-        
+
         Ansi.GetDisplayWidth(styled).Should().Be(4); // "Bold" = 4 chars
     }
 

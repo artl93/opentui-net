@@ -38,7 +38,7 @@ public static class TextEffects
         var result = new (char, RGBA)[text.Length];
         var baseTint = baseColor ?? RGBA.FromValues(0.6f, 0.6f, 0.8f);
         var highlight = highlightColor ?? RGBA.White;
-        
+
         for (int i = 0; i < text.Length; i++)
         {
             var shimmer = (float)(Math.Sin(time * 3 + i * 0.3) + 1) / 2;

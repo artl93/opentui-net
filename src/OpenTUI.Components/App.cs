@@ -1,6 +1,6 @@
-using OpenTUI.Components.Theme;
 using OpenTUI.Core.Rendering;
 using OpenTUI.Core.Terminal;
+using ThemeClass = OpenTUI.Components.Theme.Theme;
 
 namespace OpenTUI.Components;
 
@@ -12,60 +12,60 @@ public class App : IDisposable
     private readonly TerminalState _terminalState;
     private bool _running;
     private bool _disposed;
-    
+
     /// <summary>Current theme.</summary>
-    public Theme.Theme Theme
+    public ThemeClass Theme
     {
-        get => ThemeProvider.Current;
-        set => ThemeProvider.Current = value;
+        get => OpenTUI.Components.Theme.ThemeProvider.Current;
+        set => OpenTUI.Components.Theme.ThemeProvider.Current = value;
     }
-    
+
     /// <summary>Target frames per second.</summary>
     public int TargetFps { get; set; } = 30;
-    
+
     /// <summary>
     /// Creates a new App with the specified theme.
     /// </summary>
-    public App(Theme.Theme? theme = null)
+    public App(ThemeClass? theme = null)
     {
         _terminalState = new TerminalState();
-        Theme = theme ?? Theme.Dark;
+        Theme = theme ?? ThemeClass.Dark;
     }
-    
+
     /// <summary>
     /// Runs the application with the given root component.
     /// </summary>
     public void Run(Func<Components.Core.Component> rootFactory)
     {
         _running = true;
-        
+
         try
         {
             _terminalState.EnterAlternateScreen();
             _terminalState.HideCursor();
-            
-            Console.CancelKeyPress += (_, e) => 
+
+            Console.CancelKeyPress += (_, e) =>
             {
                 _running = false;
                 e.Cancel = true;
             };
-            
+
             var frameDelay = TimeSpan.FromMilliseconds(1000.0 / TargetFps);
-            
+
             while (_running)
             {
                 var size = TerminalSize.GetCurrent();
                 var buffer = new FrameBuffer(size.Width, size.Height);
-                
+
                 // Create and render root
                 var root = rootFactory();
                 root.Render(buffer, 0, 0);
-                
+
                 // Output
                 Console.Write("\x1b[H");
                 Console.Write(buffer.ToAnsiString());
                 Console.Out.Flush();
-                
+
                 // Handle input
                 if (Console.KeyAvailable)
                 {
@@ -75,7 +75,7 @@ public class App : IDisposable
                         _running = false;
                     }
                 }
-                
+
                 Thread.Sleep(frameDelay);
             }
         }
@@ -85,12 +85,12 @@ public class App : IDisposable
             _terminalState.ExitAlternateScreen();
         }
     }
-    
+
     /// <summary>
     /// Stops the application.
     /// </summary>
     public void Stop() => _running = false;
-    
+
     public void Dispose()
     {
         if (!_disposed)

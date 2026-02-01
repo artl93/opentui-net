@@ -40,7 +40,7 @@ public static class Easing
     {
         const float n1 = 7.5625f;
         const float d1 = 2.75f;
-        
+
         if (t < 1 / d1)
             return n1 * t * t;
         if (t < 2 / d1)

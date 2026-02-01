@@ -12,7 +12,7 @@ public class TextRenderableTests
     public void Constructor_Default_CreatesEmptyText()
     {
         var text = new TextRenderable();
-        
+
         text.Text.Should().BeEmpty();
         text.Wrap.Should().Be(TextWrap.None);
         text.Align.Should().Be(TextAlign.Left);
@@ -22,7 +22,7 @@ public class TextRenderableTests
     public void Constructor_WithText_SetsText()
     {
         var text = new TextRenderable("Hello");
-        
+
         text.Text.Should().Be("Hello");
     }
 
@@ -31,9 +31,9 @@ public class TextRenderableTests
     {
         var text = new TextRenderable("Hello");
         text.Layout.CalculateLayout(100, 100);
-        
+
         text.Text = "World";
-        
+
         text.Layout.IsDirty.Should().BeTrue();
     }
 
@@ -48,10 +48,10 @@ public class TextRenderableTests
         text.Layout.Width = 10;
         text.Layout.Height = 1;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("H");
         buffer.GetCell(0, 1).Character.Should().Be("e");
@@ -69,10 +69,10 @@ public class TextRenderableTests
         text.Layout.Width = 10;
         text.Layout.Height = 1;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // "Hi" (2 chars) centered in 10 chars = position 4
         buffer.GetCell(0, 4).Character.Should().Be("H");
@@ -89,10 +89,10 @@ public class TextRenderableTests
         text.Layout.Width = 10;
         text.Layout.Height = 1;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // "Hi" (2 chars) right-aligned in 10 chars = position 8
         buffer.GetCell(0, 8).Character.Should().Be("H");
@@ -109,10 +109,10 @@ public class TextRenderableTests
         text.Layout.Width = 5;
         text.Layout.Height = 2;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("H");
         buffer.GetCell(0, 4).Character.Should().Be("o");
@@ -131,10 +131,10 @@ public class TextRenderableTests
         text.Layout.Width = 7;
         text.Layout.Height = 3;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // First line: "Hello"
         buffer.GetCell(0, 0).Character.Should().Be("H");
@@ -153,10 +153,10 @@ public class TextRenderableTests
         text.Layout.Width = 5;
         text.Layout.Height = 3;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // First line: "Hello"
         buffer.GetCell(0, 4).Character.Should().Be("o");
@@ -175,10 +175,10 @@ public class TextRenderableTests
         text.Layout.Width = 5;
         text.Layout.Height = 1;
         text.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(text);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Attributes.Should().HaveFlag(TextAttributes.Bold);
     }

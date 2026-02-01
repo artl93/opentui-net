@@ -16,7 +16,7 @@ public class ConsoleOverlay : Renderable, IDisposable
     private ConsoleInterceptor? _stdOutInterceptor;
     private ConsoleInterceptor? _stdErrInterceptor;
 #pragma warning restore CS0649
-    
+
     private int _scrollOffset;
     private LogLevel _minLevel = LogLevel.Debug;
     private bool _autoScroll = true;
@@ -85,7 +85,7 @@ public class ConsoleOverlay : Renderable, IDisposable
     {
         _logBuffer = logBuffer;
         _logBuffer.EntryAdded += OnEntryAdded;
-        
+
         // Default layout - bottom 30% of screen
         Layout.PositionType = PositionType.Absolute;
         Layout.Width = FlexValue.Percent(100);
@@ -142,7 +142,7 @@ public class ConsoleOverlay : Renderable, IDisposable
     private IEnumerable<LogEntry> GetVisibleEntries()
         => _logBuffer.GetEntries(_minLevel);
 
-     /// <summary>
+    /// <summary>
     /// Renders the console overlay.
     /// </summary>
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int w, int h)
@@ -171,7 +171,7 @@ public class ConsoleOverlay : Renderable, IDisposable
             var levelText = $" [{_minLevel}+] ";
             if (w > levelText.Length + 4)
             {
-                buffer.DrawText(levelText, x + w - levelText.Length - 2, y, 
+                buffer.DrawText(levelText, x + w - levelText.Length - 2, y,
                     GetLevelColor(_minLevel), OverlayBackgroundColor);
             }
         }
@@ -199,7 +199,7 @@ public class ConsoleOverlay : Renderable, IDisposable
         if (_scrollOffset > 0 && h >= 3)
         {
             var indicator = $"▲ {_scrollOffset} more";
-            buffer.DrawText(indicator, x + w - indicator.Length - 2, y + h - 1, 
+            buffer.DrawText(indicator, x + w - indicator.Length - 2, y + h - 1,
                 RGBA.Yellow, OverlayBackgroundColor);
         }
     }
@@ -219,16 +219,16 @@ public class ConsoleOverlay : Renderable, IDisposable
         _ => RGBA.White
     };
 
-    private static (string tl, string tr, string bl, string br, string horiz, string vert) GetBorderChars(Renderables.BorderStyle style) 
+    private static (string tl, string tr, string bl, string br, string horiz, string vert) GetBorderChars(Renderables.BorderStyle style)
         => style switch
-    {
-        Renderables.BorderStyle.Single => ("┌", "┐", "└", "┘", "─", "│"),
-        Renderables.BorderStyle.Double => ("╔", "╗", "╚", "╝", "═", "║"),
-        Renderables.BorderStyle.Rounded => ("╭", "╮", "╰", "╯", "─", "│"),
-        Renderables.BorderStyle.Bold => ("┏", "┓", "┗", "┛", "━", "┃"),
-        Renderables.BorderStyle.Dashed => ("+", "+", "+", "+", "-", "|"),
-        _ => (" ", " ", " ", " ", " ", " ")
-    };
+        {
+            Renderables.BorderStyle.Single => ("┌", "┐", "└", "┘", "─", "│"),
+            Renderables.BorderStyle.Double => ("╔", "╗", "╚", "╝", "═", "║"),
+            Renderables.BorderStyle.Rounded => ("╭", "╮", "╰", "╯", "─", "│"),
+            Renderables.BorderStyle.Bold => ("┏", "┓", "┗", "┛", "━", "┃"),
+            Renderables.BorderStyle.Dashed => ("+", "+", "+", "+", "-", "|"),
+            _ => (" ", " ", " ", " ", " ", " ")
+        };
 
     private static void DrawBorder(FrameBuffer buffer, int x, int y, int w, int h,
         (string tl, string tr, string bl, string br, string horiz, string vert) chars)
@@ -305,7 +305,7 @@ public class ConsoleOverlay : Renderable, IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
-        
+
         if (disposing)
         {
             StopInterception();

@@ -16,10 +16,10 @@ public sealed class TerminalState : IDisposable
     private bool _isMouseEnabled;
     private bool _isBracketedPasteEnabled;
     private bool _disposed;
-    
+
     private readonly TextWriter _output;
     private readonly TerminalCapabilities _capabilities;
-    
+
     // Unix terminal settings backup
     private string? _originalTermSettings;
 
@@ -45,7 +45,7 @@ public sealed class TerminalState : IDisposable
     public void EnableRawMode()
     {
         if (_isRawMode) return;
-        
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             EnableRawModeWindows();
@@ -54,7 +54,7 @@ public sealed class TerminalState : IDisposable
         {
             EnableRawModeUnix();
         }
-        
+
         _isRawMode = true;
     }
 
@@ -64,7 +64,7 @@ public sealed class TerminalState : IDisposable
     public void DisableRawMode()
     {
         if (!_isRawMode) return;
-        
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             DisableRawModeWindows();
@@ -73,7 +73,7 @@ public sealed class TerminalState : IDisposable
         {
             DisableRawModeUnix();
         }
-        
+
         _isRawMode = false;
     }
 
@@ -83,7 +83,7 @@ public sealed class TerminalState : IDisposable
     public void EnterAlternateScreen()
     {
         if (_isAlternateScreen || !_capabilities.SupportsAlternateScreen) return;
-        
+
         Write(Ansi.EnterAlternateScreen);
         _isAlternateScreen = true;
     }
@@ -94,7 +94,7 @@ public sealed class TerminalState : IDisposable
     public void ExitAlternateScreen()
     {
         if (!_isAlternateScreen) return;
-        
+
         Write(Ansi.ExitAlternateScreen);
         _isAlternateScreen = false;
     }
@@ -105,7 +105,7 @@ public sealed class TerminalState : IDisposable
     public void HideCursor()
     {
         if (_isCursorHidden) return;
-        
+
         Write(Ansi.HideCursor);
         _isCursorHidden = true;
     }
@@ -116,7 +116,7 @@ public sealed class TerminalState : IDisposable
     public void ShowCursor()
     {
         if (!_isCursorHidden) return;
-        
+
         Write(Ansi.ShowCursor);
         _isCursorHidden = false;
     }
@@ -127,7 +127,7 @@ public sealed class TerminalState : IDisposable
     public void EnableMouse()
     {
         if (_isMouseEnabled || !_capabilities.SupportsMouse) return;
-        
+
         Write(Ansi.EnableMouse);
         _isMouseEnabled = true;
     }
@@ -138,7 +138,7 @@ public sealed class TerminalState : IDisposable
     public void DisableMouse()
     {
         if (!_isMouseEnabled) return;
-        
+
         Write(Ansi.DisableMouse);
         _isMouseEnabled = false;
     }
@@ -149,7 +149,7 @@ public sealed class TerminalState : IDisposable
     public void EnableBracketedPaste()
     {
         if (_isBracketedPasteEnabled || !_capabilities.SupportsBracketedPaste) return;
-        
+
         Write(Ansi.EnableBracketedPaste);
         _isBracketedPasteEnabled = true;
     }
@@ -160,7 +160,7 @@ public sealed class TerminalState : IDisposable
     public void DisableBracketedPaste()
     {
         if (!_isBracketedPasteEnabled) return;
-        
+
         Write(Ansi.DisableBracketedPaste);
         _isBracketedPasteEnabled = false;
     }
@@ -212,13 +212,13 @@ public sealed class TerminalState : IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         Restore();
         _disposed = true;
     }
 
     // Platform-specific implementations
-    
+
     private void EnableRawModeWindows()
     {
         // On Windows, we primarily need to handle Console settings
@@ -265,7 +265,7 @@ public sealed class TerminalState : IDisposable
             process.Start();
             _originalTermSettings = process.StandardOutput.ReadToEnd().Trim();
             process.WaitForExit();
-            
+
             // Enable raw mode: disable echo, canonical mode, and signal processing
             process = new System.Diagnostics.Process
             {
@@ -289,7 +289,7 @@ public sealed class TerminalState : IDisposable
     private void DisableRawModeUnix()
     {
         if (_originalTermSettings == null) return;
-        
+
         try
         {
             var process = new System.Diagnostics.Process

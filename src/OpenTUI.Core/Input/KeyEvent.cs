@@ -6,40 +6,40 @@ namespace OpenTUI.Core.Input;
 public enum Key
 {
     None = 0,
-    
+
     // Letters
     A, B, C, D, E, F, G, H, I, J, K, L, M,
     N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-    
+
     // Numbers
     D0, D1, D2, D3, D4, D5, D6, D7, D8, D9,
-    
+
     // Function keys
     F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
-    
+
     // Navigation
     Up, Down, Left, Right,
     Home, End, PageUp, PageDown,
-    
+
     // Editing
     Backspace, Delete, Insert,
     Enter, Tab, Escape, Space,
-    
+
     // Punctuation
     Comma, Period, Semicolon, Quote,
     LeftBracket, RightBracket, Backslash, Slash,
     Minus, Equals, Backtick,
-    
+
     // Special
     PrintScreen, ScrollLock, Pause,
     NumLock, CapsLock,
-    
+
     // Numpad
     Numpad0, Numpad1, Numpad2, Numpad3, Numpad4,
     Numpad5, Numpad6, Numpad7, Numpad8, Numpad9,
     NumpadAdd, NumpadSubtract, NumpadMultiply, NumpadDivide,
     NumpadDecimal, NumpadEnter,
-    
+
     // Unknown/unrecognized
     Unknown
 }
@@ -64,28 +64,28 @@ public readonly record struct KeyEvent
 {
     /// <summary>The key that was pressed.</summary>
     public Key Key { get; init; }
-    
+
     /// <summary>The character representation, if printable.</summary>
     public char? Character { get; init; }
-    
+
     /// <summary>Modifier keys held during the event.</summary>
     public KeyModifiers Modifiers { get; init; }
-    
+
     /// <summary>Whether this is a key down (press) event.</summary>
     public bool IsKeyDown { get; init; }
-    
+
     /// <summary>Whether Shift is held.</summary>
     public bool Shift => (Modifiers & KeyModifiers.Shift) != 0;
-    
+
     /// <summary>Whether Alt is held.</summary>
     public bool Alt => (Modifiers & KeyModifiers.Alt) != 0;
-    
+
     /// <summary>Whether Control is held.</summary>
     public bool Control => (Modifiers & KeyModifiers.Control) != 0;
-    
+
     /// <summary>Whether Meta (Windows/Command) is held.</summary>
     public bool Meta => (Modifiers & KeyModifiers.Meta) != 0;
-    
+
     /// <summary>Whether this event represents a printable character.</summary>
     public bool IsPrintable => Character.HasValue && !char.IsControl(Character.Value);
 
@@ -144,13 +144,13 @@ public readonly record struct KeyEvent
         if (Alt) mods.Add("Alt");
         if (Shift) mods.Add("Shift");
         if (Meta) mods.Add("Meta");
-        
-        var keyStr = Character.HasValue && IsPrintable 
-            ? $"'{Character}'" 
+
+        var keyStr = Character.HasValue && IsPrintable
+            ? $"'{Character}'"
             : Key.ToString();
-            
-        return mods.Count > 0 
-            ? $"{string.Join("+", mods)}+{keyStr}" 
+
+        return mods.Count > 0
+            ? $"{string.Join("+", mods)}+{keyStr}"
             : keyStr;
     }
 }

@@ -9,16 +9,16 @@ public struct Cell : IEquatable<Cell>
 {
     /// <summary>The character to display (can be a grapheme cluster).</summary>
     public string Character { get; set; }
-    
+
     /// <summary>Foreground color.</summary>
     public RGBA Foreground { get; set; }
-    
+
     /// <summary>Background color.</summary>
     public RGBA Background { get; set; }
-    
+
     /// <summary>Text attributes (bold, italic, etc.).</summary>
     public TextAttributes Attributes { get; set; }
-    
+
     /// <summary>
     /// If greater than 1, this cell is a placeholder for a wide character.
     /// The actual character is in the cell to the left.

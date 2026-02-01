@@ -49,9 +49,9 @@ public class StateTests
         var state = new State<int>(1);
         int? received = null;
         state.Changed += (_, v) => received = v;
-        
+
         state.Set(42);
-        
+
         received.Should().Be(42);
     }
 
@@ -61,9 +61,9 @@ public class StateTests
         var state = new State<int>(5);
         var eventCount = 0;
         state.Changed += (_, _) => eventCount++;
-        
+
         state.Set(5);
-        
+
         eventCount.Should().Be(0);
     }
 
@@ -73,11 +73,11 @@ public class StateTests
         var state = new State<int>(0);
         var values = new List<int>();
         state.Subscribe(v => values.Add(v));
-        
+
         state.Set(1);
         state.Set(2);
         state.Set(3);
-        
+
         values.Should().Equal(1, 2, 3);
     }
 
@@ -87,11 +87,11 @@ public class StateTests
         var state = new State<int>(0);
         var values = new List<int>();
         var subscription = state.Subscribe(v => values.Add(v));
-        
+
         state.Set(1);
         subscription.Dispose();
         state.Set(2);
-        
+
         values.Should().Equal(1);
     }
 
@@ -123,11 +123,11 @@ public class StateTests
         var state = new State<string>("Hello");
         var eventCount = 0;
         state.Changed += (_, _) => eventCount++;
-        
+
         // Same value should not trigger
         state.Set("Hello");
         eventCount.Should().Be(0);
-        
+
         // Different value should trigger
         state.Set("World");
         eventCount.Should().Be(1);
@@ -146,12 +146,12 @@ public class StateTests
         var state = new State<int>(0);
         var values1 = new List<int>();
         var values2 = new List<int>();
-        
+
         state.Subscribe(v => values1.Add(v));
         state.Subscribe(v => values2.Add(v));
-        
+
         state.Set(1);
-        
+
         values1.Should().Equal(1);
         values2.Should().Equal(1);
     }

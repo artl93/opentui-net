@@ -12,7 +12,7 @@ public class BoxRenderableTests
     public void Constructor_Default_HasSingleBorder()
     {
         var box = new BoxRenderable();
-        
+
         box.BorderStyle.Should().Be(BorderStyle.Single);
     }
 
@@ -28,10 +28,10 @@ public class BoxRenderableTests
         box.Layout.Width = 5;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("┌");
         buffer.GetCell(0, 4).Character.Should().Be("┐");
@@ -52,10 +52,10 @@ public class BoxRenderableTests
         box.Layout.Width = 5;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("╔");
         buffer.GetCell(0, 4).Character.Should().Be("╗");
@@ -72,10 +72,10 @@ public class BoxRenderableTests
         box.Layout.Width = 5;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Character.Should().Be("╭");
         buffer.GetCell(0, 4).Character.Should().Be("╮");
@@ -93,10 +93,10 @@ public class BoxRenderableTests
         box.Layout.Width = 5;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // No border characters should be drawn, just background
         buffer.GetCell(0, 0).Character.Should().Be(" ");
@@ -114,10 +114,10 @@ public class BoxRenderableTests
         box.Layout.Width = 12;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // Title should appear in top border with spaces
         buffer.GetCell(0, 3).Character.Should().Be("T");
@@ -139,10 +139,10 @@ public class BoxRenderableTests
         box.Layout.Width = 12;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // "Hi" centered in width 12 (minus corners = 10, minus padding = 8)
         // Center position = (12 - 4) / 2 = 4
@@ -161,10 +161,10 @@ public class BoxRenderableTests
         box.Layout.Width = 5;
         box.Layout.Height = 3;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         buffer.GetCell(0, 0).Foreground.Should().Be(RGBA.Red);
     }
@@ -180,15 +180,15 @@ public class BoxRenderableTests
         box.Layout.Width = 10;
         box.Layout.Height = 5;
         box.Layout.AlignSelf = AlignSelf.FlexStart;
-        
+
         var text = new TextRenderable("Hi");
         text.Layout.Width = 5;
         text.Layout.Height = 1;
-        
+
         box.Add(text);
         renderer.Root.Add(box);
         renderer.Render();
-        
+
         var buffer = renderer.GetBuffer();
         // Border should be drawn at position 0,0
         buffer.GetCell(0, 0).Character.Should().Be("┌");

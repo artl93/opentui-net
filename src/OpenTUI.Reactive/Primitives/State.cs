@@ -100,6 +100,6 @@ public static class State
     public static State<T> Create<T>(T initialValue) => new(initialValue);
 
     /// <summary>Creates a new state with a custom equality comparer.</summary>
-    public static State<T> Create<T>(T initialValue, EqualityComparer<T> comparer) 
+    public static State<T> Create<T>(T initialValue, EqualityComparer<T> comparer)
         => new(initialValue, comparer);
 }

@@ -49,7 +49,7 @@ void Log(string message)
 try
 {
     Log("Starting OpenTUI.NET Demo");
-    
+
     Console.WriteLine("OpenTUI.NET Interactive Demo");
     Console.WriteLine("============================");
     Console.WriteLine($"(Log file: {logFile})\n");
@@ -76,7 +76,7 @@ try
     buffer.DrawText("Hello, OpenTUI!", 2, 0, RGBA.Green);
     buffer.DrawText("Flexbox Layout Engine", 2, 1, RGBA.Yellow);
     buffer.DrawText("Buffer works!", 2, 2, RGBA.Cyan);
-    
+
     // Output plain text version
     for (int row = 0; row < buffer.Height; row++)
     {
@@ -205,14 +205,14 @@ try
     Console.WriteLine("   dotnet run -- --form       (form input demo)");
     Console.WriteLine("   dotnet run -- --dashboard  (dashboard widget demo)");
     Console.WriteLine();
-    
+
     Log("Demo completed successfully");
 }
 catch (Exception ex)
 {
     Log($"ERROR: {ex.GetType().Name}: {ex.Message}");
     Log($"Stack trace:\n{ex.StackTrace}");
-    
+
     // Reset terminal and show error
     Console.Write("\u001b[0m"); // Reset colors
     Console.WriteLine();

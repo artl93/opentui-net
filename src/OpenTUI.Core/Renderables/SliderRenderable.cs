@@ -24,7 +24,7 @@ public class SliderRenderable : Renderable
             // Snap to step
             newValue = MathF.Round(newValue / _step) * _step;
             newValue = Math.Clamp(newValue, _min, _max);
-            
+
             if (Math.Abs(_value - newValue) > float.Epsilon)
             {
                 _value = newValue;

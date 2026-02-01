@@ -11,10 +11,10 @@ namespace OpenTUI.Components.Components.Form;
 public class Checkbox : Component
 {
     private bool _checked;
-    
+
     /// <summary>Checkbox label.</summary>
     public string Label { get; set; } = "";
-    
+
     /// <summary>Whether the checkbox is checked.</summary>
     public bool Checked
     {
@@ -29,13 +29,13 @@ public class Checkbox : Component
             }
         }
     }
-    
+
     /// <summary>Whether to show an indeterminate state.</summary>
     public bool Indeterminate { get; set; }
-    
+
     /// <summary>Change handler.</summary>
     public Action<bool>? OnChange { get; set; }
-    
+
     /// <summary>
     /// Toggles the checkbox state.
     /// </summary>
@@ -46,24 +46,24 @@ public class Checkbox : Component
             Checked = !Checked;
         }
     }
-    
+
     protected override void RenderSelf(FrameBuffer buffer, int x, int y, int width, int height)
     {
-        
-        var boxColor = Disabled 
-            ? GetColor(ColorToken.BorderWeak) 
-            : Focused 
-                ? GetColor(ColorToken.BorderSelected) 
+
+        var boxColor = Disabled
+            ? GetColor(ColorToken.BorderWeak)
+            : Focused
+                ? GetColor(ColorToken.BorderSelected)
                 : GetColor(ColorToken.BorderBase);
-        
+
         var checkColor = Disabled
             ? GetColor(ColorToken.TextDisabled)
             : GetColor(ColorToken.PrimaryBase);
-        
+
         var textColor = Disabled
             ? GetColor(ColorToken.TextDisabled)
             : GetColor(ColorToken.TextBase);
-        
+
         // Draw checkbox box
         string box;
         if (Indeterminate)
@@ -78,11 +78,11 @@ public class Checkbox : Component
         {
             box = "[ ]";
         }
-        
+
         // Box brackets
         buffer.DrawText("[", x, y, boxColor);
         buffer.DrawText("]", x + 2, y, boxColor);
-        
+
         // Check mark
         if (Indeterminate)
         {
@@ -96,13 +96,13 @@ public class Checkbox : Component
         {
             buffer.DrawText(" ", x + 1, y, RGBA.Transparent);
         }
-        
+
         // Label
         if (!string.IsNullOrEmpty(Label))
         {
             buffer.DrawText(Label, x + 4, y, textColor);
         }
-        
+
         // Focus indicator
         if (Focused)
         {
