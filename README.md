@@ -1,6 +1,6 @@
 # OpenTUI.NET
 
-A pure C# terminal UI library with flexbox layout, inspired by [OpenTUI](https://github.com/anomalyco/opentui). Build rich, interactive terminal applications with a React-like component model.
+A pure C# terminal UI library with flexbox layout, inspired by [OpenTUI](https://github.com/anomalyco/opentui). Build rich, interactive terminal applications with a React-like component model. This is experimental right now and written using GitHub Copilot CLI. 
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
