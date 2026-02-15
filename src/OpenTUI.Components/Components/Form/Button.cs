@@ -23,9 +23,6 @@ public enum ButtonVariant
 /// </summary>
 public class Button : Component
 {
-    private bool _isPressed;
-    private bool _isHovered;
-
     /// <summary>Button label text.</summary>
     public string Label { get; set; } = "";
 
@@ -126,29 +123,21 @@ public class Button : Component
         return Variant switch
         {
             ButtonVariant.Primary => (
-                _isPressed ? GetColor(ColorToken.PrimaryActive) :
-                _isHovered ? GetColor(ColorToken.PrimaryHover) :
                 GetColor(ColorToken.PrimaryBase),
                 GetColor(ColorToken.TextOnPrimary),
                 RGBA.Transparent
             ),
             ButtonVariant.Secondary => (
-                _isPressed ? GetColor(ColorToken.SecondaryActive) :
-                _isHovered ? GetColor(ColorToken.SecondaryHover) :
                 GetColor(ColorToken.SurfaceElevated),
                 GetColor(ColorToken.TextStrong),
                 GetColor(ColorToken.BorderBase)
             ),
             ButtonVariant.Ghost => (
-                _isPressed ? GetColor(ColorToken.GhostActive) :
-                _isHovered ? GetColor(ColorToken.GhostHover) :
                 RGBA.Transparent,
                 GetColor(ColorToken.TextBase),
                 RGBA.Transparent
             ),
             ButtonVariant.Danger => (
-                _isPressed ? GetColor(ColorToken.CriticalBase).WithAlpha(0.8f) :
-                _isHovered ? GetColor(ColorToken.CriticalBase).WithAlpha(0.9f) :
                 GetColor(ColorToken.CriticalBase),
                 GetColor(ColorToken.TextOnCritical),
                 RGBA.Transparent
